@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:paddingLeft="8dp"
+  android:paddingTop="8dp"
+  android:paddingStart="8dp">
+
+  <TextView
+    android:id="@+id/tv_contact_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_toEndOf="@id/tv_phone_number"
+    android:layout_toRightOf="@id/tv_phone_number"
+    android:textSize="18sp"
+    tools:text="@string/name_hint" />
+  <TextView
+    android:id="@+id/tv_phone_number"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_below="@id/tv_contact_name"
+    android:textSize="20sp"
+    tools:text="@string/phone_hint" />
+  <TextView
+    android:id="@+id/tv_date_time"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_below="@id/tv_phone_number"
+    android:textSize="24sp"
+    tools:text="@string/date_time_hint" />
+  <TextView
+    android:id="@+id/tv_reminder_reason"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_below="@id/tv_date_time"
+    android:textSize="16sp"
+    tools:text="@string/no_reason_hint" />
+</RelativeLayout>

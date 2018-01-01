@@ -1,0 +1,34 @@
+<resources>
+  <string name="app_name">CallReminder</string>
+
+
+  <string name="hello_logs_fragment">Hello Logs Fragment</string>
+
+  <!-- Fragments titles -->
+  <string name="reminders_frag_title">Reminders</string>
+  <string name="logs_frag_title">Logs</string>
+
+  <!-- activity_add_reminder.xml -->
+  <string name="et_name_hint">Name</string>
+  <string name="contact_profile_image_des">contact profile image</string>
+  <string name="phone_number_hint">Phone number</string>
+  <string name="time_hint">Time</string>
+  <string name="date_hint">Date</string>
+  <string name="description_hint">Calling this number for…</string>
+  <string name="set_reminder_btn_text">Set Reminder</string>
+  <string name="contacts_btn_text">Contacts</string>
+  <string name="time_displayed">%1$s : %2$s</string>
+  <string name="date_displayed">%1$s/%2$s/%3$s</string>
+  <string name="phone_number_required">Phone Number is required</string>
+  <string name="future_date_error">Date should be in the future</string>
+
+  <!-- Reminders Fragment -->
+  <string name="no_reason_hint">No reason provided</string>
+  <string name="date_time_hint">13:24 05/12/17</string>
+  <string name="phone_hint">+212661324257</string>
+  <string name="name_hint">Bouchra Diraoui</string>
+  <string name="notification_body">%1$s %2$s</string>
+  <!-- notification actions -->
+  <string name="notification_action_call">Call</string>
+  <string name="notification_action_cancel">Cancel</string>
+</resources>
