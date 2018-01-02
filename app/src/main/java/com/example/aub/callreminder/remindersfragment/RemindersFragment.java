@@ -1,23 +1,28 @@
 package com.example.aub.callreminder.remindersfragment;
 
 
+import android.Manifest.permission;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.RemindersAdapter;
+import com.example.aub.callreminder.events.CallNowEvent;
 import com.example.aub.callreminder.events.ContactIdEvent;
 import com.example.aub.callreminder.events.ContactListEvent;
-import com.example.aub.callreminder.events.NotifyMeEvent;
+import com.example.aub.callreminder.events.DeleteAdapterEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -56,7 +61,7 @@ public class RemindersFragment extends Fragment implements ReminderFragView {
     }
 
     @Subscribe public void displayData(ContactListEvent event) {
-        mRemindersAdapter = new RemindersAdapter(event.getContactList());
+        mRemindersAdapter = new RemindersAdapter(event.getContactList(), getContext());
         mReminderFragRv.setAdapter(mRemindersAdapter);
         mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -71,5 +76,20 @@ public class RemindersFragment extends Fragment implements ReminderFragView {
 
     @Subscribe public void onEvent(ContactIdEvent event) {
         mRemindersAdapter.notifyItemInserted((int) event.getId());
+        mReminderFragRv.scrollToPosition((int) event.getId());
+    }
+
+    @Subscribe public void onEvent(DeleteAdapterEvent event) {
+        mPresenter.loadData();
+    }
+
+    @Subscribe public void onEvent(CallNowEvent event) {
+        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + event.getContactPhoneNumber()));
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if (ActivityCompat.checkSelfPermission(getContext(), permission.CALL_PHONE)
+                == PackageManager.PERMISSION_GRANTED) {
+            getContext().startActivity(callIntent);
+        }
     }
 }

@@ -31,4 +31,6 @@
   <!-- notification actions -->
   <string name="notification_action_call">Call</string>
   <string name="notification_action_cancel">Cancel</string>
+  <string name="cancel_button">Cancel</string>
+  <string name="call_now_btn">Call</string>
 </resources>
