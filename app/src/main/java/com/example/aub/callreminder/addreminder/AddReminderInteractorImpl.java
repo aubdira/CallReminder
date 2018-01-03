@@ -129,6 +129,7 @@ public class AddReminderInteractorImpl implements AddReminderInteractor {
         intent.putExtra(NotificationPublisher.NAME, contactName);
         intent.putExtra(NotificationPublisher.PHONE, phoneNumber);
         intent.putExtra(NotificationPublisher.REASON, reason);
+        intent.putExtra(NotificationPublisher.TIME, timeInMills);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 mContext,
                 (int) timeInMills,

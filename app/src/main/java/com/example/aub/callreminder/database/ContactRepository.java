@@ -25,6 +25,10 @@ public class ContactRepository {
         return contactDao.getContactById(id);
     }
 
+    public Contact getContactByTime(long time) {
+        return contactDao.getContactByTime(time);
+    }
+
     public List<Contact> getContactsListByTimeDESC() {
         return contactDao.getContactsListByTimeDESC();
     }

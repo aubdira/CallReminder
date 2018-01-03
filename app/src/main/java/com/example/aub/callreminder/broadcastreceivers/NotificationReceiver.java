@@ -1,13 +1,20 @@
 package com.example.aub.callreminder.broadcastreceivers;
 
 import android.Manifest.permission;
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+import com.example.aub.callreminder.database.Contact;
+import com.example.aub.callreminder.database.ContactRepository;
+import com.example.aub.callreminder.events.DeleteAdapterEvent;
+import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -23,14 +30,15 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private static final String TAG = "NotificationReceiver";
 
-    @Override public void onReceive(Context context, Intent intent) {
+    @SuppressLint("StaticFieldLeak") @Override public void onReceive(final Context context, Intent intent) {
         NotificationManager manager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
         String action = intent.getAction();
-        String phoneNumber = intent.getStringExtra("phone_number");
+        final long timeInMillis = intent.getLongExtra("time_in_millis", 0);
 
         if (CALL_ACTION.equals(action)) {
+            String phoneNumber = intent.getStringExtra("phone_number");
 
             Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
             callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -48,6 +56,25 @@ public class NotificationReceiver extends BroadcastReceiver {
                 manager.cancel(NotificationPublisher.NOTIFICATION_ID);
             }
         }
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override protected Void doInBackground(Void... voids) {
+                ContactRepository mRepository = new ContactRepository(context);
+                Contact contact = mRepository.getContactByTime(timeInMillis);
+                if (contact != null) {
+                    mRepository.deleteContact(contact);
+                } else {
+                    Log.d(TAG, "onHandleIntent: contact is null");
+                }
+                return null;
+            }
+
+            @Override protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                DeleteAdapterEvent event = new DeleteAdapterEvent();
+                EventBus.getDefault().post(event);
+            }
+        }.execute();
     }
 
 }

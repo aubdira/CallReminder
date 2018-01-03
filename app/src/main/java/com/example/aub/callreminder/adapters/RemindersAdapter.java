@@ -107,8 +107,6 @@ public class RemindersAdapter extends Adapter<ViewHolder> {
                         super.onPostExecute(v);
                         // update the adapter
                         DeleteAdapterEvent event = new DeleteAdapterEvent();
-                        event.setId(currentContact.getId());
-                        event.setSize(mContactList.size());
                         EventBus.getDefault().post(event);
                     }
                 }.execute();

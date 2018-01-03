@@ -27,6 +27,9 @@ public interface ContactDao {
     @Query("SELECT * FROM contacts_info ORDER BY reminder_time ASC")
     List<Contact> getContactsListByTimeASC();
 
+    @Query("SELECT * FROM contacts_info WHERE reminder_time = :time")
+    Contact getContactByTime(long time);
+
     @Insert long insertContact(Contact contact);
 
     @Delete void deleteContact(Contact contact);

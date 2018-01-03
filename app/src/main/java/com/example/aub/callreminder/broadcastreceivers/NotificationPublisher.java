@@ -28,6 +28,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static final String PHONE = "phone";
     public static final String REASON = "reason";
     public static final int NOTIFICATION_ID = 1;
+    public static final String TIME = "time_in_millis";
 
     @Override public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive: broadcast started");
@@ -35,9 +36,10 @@ public class NotificationPublisher extends BroadcastReceiver {
             String name = intent.getStringExtra(NAME);
             String phone = intent.getStringExtra(PHONE);
             String reason = intent.getStringExtra(REASON);
+            long time = intent.getLongExtra(TIME, 0);
             NotificationManager manager =
                     (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-            Notification notification = getNotification(context, name, phone, reason);
+            Notification notification = getNotification(context, name, phone, reason, time);
             if (manager != null) {
                 manager.notify(NOTIFICATION_ID, notification);
             }
@@ -45,7 +47,8 @@ public class NotificationPublisher extends BroadcastReceiver {
     }
 
     private Notification getNotification(Context context, String contactName, String phoneNumber,
-            String reason) {
+            String reason, long time) {
+        Log.d(TAG, "getNotification: time "+time);
         Resources resources = context.getResources();
         long[] pattern = {0, 300, 400, 300, 100, 0};
 
@@ -66,6 +69,7 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // notification cancel action
         Intent cancelIntent = new Intent();
+        cancelIntent.putExtra("time_in_millis", time);
         cancelIntent.setAction(NotificationReceiver.CANCEL_ACTION);
         PendingIntent cancelPending = PendingIntent
                 .getBroadcast(context, 3, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -75,6 +79,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         // notification call action
         Intent callIntent = new Intent();
         callIntent.putExtra("phone_number", phoneNumber);
+        callIntent.putExtra("time_in_millis", time);
         callIntent.setAction(NotificationReceiver.CALL_ACTION);
         PendingIntent callPending = PendingIntent
                 .getBroadcast(context, 3, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
