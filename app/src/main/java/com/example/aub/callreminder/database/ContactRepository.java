@@ -17,10 +17,6 @@ public class ContactRepository {
         contactDao = DatabaseCreator.getAppDatabase(context).getContactDao();
     }
 
-    public List<Contact> getContactList() {
-        return contactDao.getContactsList();
-    }
-
     public Contact getContactById(int id) {
         return contactDao.getContactById(id);
     }
@@ -29,12 +25,12 @@ public class ContactRepository {
         return contactDao.getContactByTime(time);
     }
 
-    public List<Contact> getContactsListByTimeDESC() {
-        return contactDao.getContactsListByTimeDESC();
-    }
-
     public List<Contact> getContactsListByTimeASC() {
         return contactDao.getContactsListByTimeASC();
+    }
+
+    public List<Contact> getContactsLogListByTimeASC() {
+        return contactDao.getContactsLogListByTimeASC();
     }
 
     public long insertContact(Contact contact) {
@@ -43,5 +39,9 @@ public class ContactRepository {
 
     public void deleteContact(Contact contact) {
         contactDao.deleteContact(contact);
+    }
+
+    public void updateAsLog(Contact contact) {
+        contactDao.updateContactAsLog(contact);
     }
 }

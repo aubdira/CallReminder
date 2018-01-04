@@ -22,7 +22,8 @@ import com.example.aub.callreminder.adapters.RemindersAdapter;
 import com.example.aub.callreminder.events.CallNowEvent;
 import com.example.aub.callreminder.events.ContactIdEvent;
 import com.example.aub.callreminder.events.ContactListEvent;
-import com.example.aub.callreminder.events.DeleteAdapterEvent;
+import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
+import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -79,7 +80,11 @@ public class RemindersFragment extends Fragment implements ReminderFragView {
         mReminderFragRv.scrollToPosition((int) event.getId());
     }
 
-    @Subscribe public void onEvent(DeleteAdapterEvent event) {
+    @Subscribe public void onEvent(DeleteLogAdapterEvent event) {
+        mPresenter.loadData();
+    }
+
+    @Subscribe public void updateAdapter(UpdateContactAsLogEvent event) {
         mPresenter.loadData();
     }
 

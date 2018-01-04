@@ -4,10 +4,8 @@
   android:layout_height="match_parent"
   tools:context="com.example.aub.callreminder.logsfragment.LogsFragment">
 
-  <TextView
-    android:gravity="center|center_horizontal"
+  <android.support.v7.widget.RecyclerView
+    android:id="@+id/logs_frag_rv"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:text="@string/hello_logs_fragment" />
-
+    android:layout_height="match_parent" />
 </FrameLayout>

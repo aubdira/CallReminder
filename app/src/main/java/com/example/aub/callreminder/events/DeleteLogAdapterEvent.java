@@ -5,8 +5,8 @@ package com.example.aub.callreminder.events;
  * Project: CallReminder
  */
 
-public class DeleteAdapterEvent {
+public class DeleteLogAdapterEvent {
 
-    public DeleteAdapterEvent() {
+    public DeleteLogAdapterEvent() {
     }
 }

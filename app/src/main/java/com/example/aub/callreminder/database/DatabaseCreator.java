@@ -10,12 +10,12 @@ import android.content.Context;
  * see https://github.com/srinurp/AndroidRoom/blob/master/app/src/main/java/com/zoftino/room/DatabaseCreator.java
  */
 
-public class DatabaseCreator {
+class DatabaseCreator {
 
     private static AppDatabase appDatabase;
     private static final Object LOCK = new Object();
 
-    public synchronized static AppDatabase getAppDatabase(Context context) {
+    synchronized static AppDatabase getAppDatabase(Context context) {
         if (appDatabase == null) {
             synchronized (LOCK) {
                 if (appDatabase == null) {

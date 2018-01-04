@@ -11,6 +11,8 @@ import java.util.List;
 
 public class ContactListEvent {
 
+    private List<Contact> contactList;
+
     public List<Contact> getContactList() {
         return contactList;
     }
@@ -18,6 +20,4 @@ public class ContactListEvent {
     public void setContactList(List<Contact> contactList) {
         this.contactList = contactList;
     }
-
-    private List<Contact> contactList;
 }

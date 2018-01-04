@@ -29,6 +29,9 @@ public class Contact {
     @ColumnInfo(name = "reminder_reason")
     private String reminderReason;
 
+    @ColumnInfo(name = "is_log")
+    private int isLog = 0;
+
     /*
         Constructor
      */
@@ -84,5 +87,14 @@ public class Contact {
 
     public void setReminderReason(String reminderReason) {
         this.reminderReason = reminderReason;
+    }
+
+
+    public int getIsLog() {
+        return isLog;
+    }
+
+    public void setIsLog(int isLog) {
+        this.isLog = isLog;
     }
 }

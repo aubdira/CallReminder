@@ -2,6 +2,7 @@ package com.example.aub.callreminder.broadcastreceivers;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Notification.BigTextStyle;
 import android.app.NotificationManager;
@@ -11,8 +12,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.media.RingtoneManager;
+import android.os.AsyncTask;
 import android.util.Log;
 import com.example.aub.callreminder.R;
+import com.example.aub.callreminder.database.Contact;
+import com.example.aub.callreminder.database.ContactRepository;
+import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
+import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -30,19 +36,41 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static final int NOTIFICATION_ID = 1;
     public static final String TIME = "time_in_millis";
 
-    @Override public void onReceive(Context context, Intent intent) {
+    @SuppressLint("StaticFieldLeak") @Override public void onReceive(final Context context, Intent intent) {
         Log.d(TAG, "onReceive: broadcast started");
         if (intent != null) {
             String name = intent.getStringExtra(NAME);
             String phone = intent.getStringExtra(PHONE);
             String reason = intent.getStringExtra(REASON);
-            long time = intent.getLongExtra(TIME, 0);
+            final long time = intent.getLongExtra(TIME, 0);
             NotificationManager manager =
                     (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
             Notification notification = getNotification(context, name, phone, reason, time);
             if (manager != null) {
                 manager.notify(NOTIFICATION_ID, notification);
             }
+
+            // after canceling or accepting to call the number
+            // update the reminder as 'log'
+            new AsyncTask<Void, Void, Void>() {
+                @Override protected Void doInBackground(Void... voids) {
+                    ContactRepository mRepository = new ContactRepository(context);
+                    Contact contact = mRepository.getContactByTime(time);
+                    if (contact != null) {
+                        contact.setIsLog(1);
+                        mRepository.updateAsLog(contact);
+                    } else {
+                        Log.d(TAG, "onHandleIntent: contact is null");
+                    }
+                    return null;
+                }
+
+                @Override protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    UpdateContactAsLogEvent event = new UpdateContactAsLogEvent();
+                    EventBus.getDefault().post(event);
+                }
+            }.execute();
         }
     }
 

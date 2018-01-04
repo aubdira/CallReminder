@@ -13,7 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.database.ContactRepository;
-import com.example.aub.callreminder.events.DeleteAdapterEvent;
+import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
+import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -57,24 +58,27 @@ public class NotificationReceiver extends BroadcastReceiver {
             }
         }
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override protected Void doInBackground(Void... voids) {
-                ContactRepository mRepository = new ContactRepository(context);
-                Contact contact = mRepository.getContactByTime(timeInMillis);
-                if (contact != null) {
-                    mRepository.deleteContact(contact);
-                } else {
-                    Log.d(TAG, "onHandleIntent: contact is null");
-                }
-                return null;
-            }
-
-            @Override protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                DeleteAdapterEvent event = new DeleteAdapterEvent();
-                EventBus.getDefault().post(event);
-            }
-        }.execute();
+//        // after canceling or accepting to call the number
+//        // update the reminder as 'log'
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override protected Void doInBackground(Void... voids) {
+//                ContactRepository mRepository = new ContactRepository(context);
+//                Contact contact = mRepository.getContactByTime(timeInMillis);
+//                if (contact != null) {
+//                    contact.setIsLog(1);
+//                    mRepository.updateAsLog(contact);
+//                } else {
+//                    Log.d(TAG, "onHandleIntent: contact is null");
+//                }
+//                return null;
+//            }
+//
+//            @Override protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//                UpdateContactAsLogEvent event = new UpdateContactAsLogEvent();
+//                EventBus.getDefault().post(event);
+//            }
+//        }.execute();
     }
 
 }
