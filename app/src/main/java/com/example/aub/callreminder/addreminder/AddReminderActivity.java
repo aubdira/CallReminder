@@ -50,6 +50,8 @@ public class AddReminderActivity extends FragmentActivity implements
     private String mReminderReason;
 
     private AddReminderPresenter mPresenter;
+    private String mDate;
+    private String mTime;
 
 
     @Override
@@ -63,6 +65,41 @@ public class AddReminderActivity extends FragmentActivity implements
         ButterKnife.bind(this);
     }
 
+    @Override protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("time", mTime);
+        outState.putString("date", mDate);
+        outState.putInt("year", mYear);
+        outState.putInt("month", mMonth);
+        outState.putInt("day", mDay);
+        outState.putInt("hour", mHour);
+        outState.putInt("minute", mMinute);
+    }
+
+    @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String time = savedInstanceState.getString("time");
+        String date = savedInstanceState.getString("date");
+        int year = savedInstanceState.getInt("year");
+        int month = savedInstanceState.getInt("month");
+        int day = savedInstanceState.getInt("day");
+        int hour = savedInstanceState.getInt("hour");
+        int minute = savedInstanceState.getInt("minute");
+        if (time != null && !time.isEmpty()) {
+            mTime = time;
+            mTimePickerBtn.setText(mTime);
+        }
+        if (date != null && !date.isEmpty()) {
+            mDate = date;
+            mDatePickerBtn.setText(mDate);
+        }
+        mYear = year;
+        mMonth = month;
+        mDay = day;
+        mHour = hour;
+        mMinute = minute;
+    }
+
     @OnClick(R.id.btn_time_picker)
     public void showTimePickerDialog(View v) {
         DialogFragment timeFragment = new TimePickerFragment();
@@ -73,8 +110,9 @@ public class AddReminderActivity extends FragmentActivity implements
     public void onTimeSet(int hourOfDay, int minute) {
         mHour = hourOfDay;
         mMinute = minute;
-        mTimePickerBtn.setText(getString(
-                R.string.time_displayed, String.valueOf(mHour), String.valueOf(mMinute)));
+        mTime = getString(
+                R.string.time_displayed, String.valueOf(mHour), String.valueOf(mMinute));
+        mTimePickerBtn.setText(mTime);
     }
 
     @OnClick(R.id.btn_date_picker)
@@ -88,9 +126,10 @@ public class AddReminderActivity extends FragmentActivity implements
         mYear = year;
         mMonth = month;
         mDay = day;
-        mDatePickerBtn.setText(getString(R.string.date_displayed,
+        mDate = getString(R.string.date_displayed,
                 String.valueOf(mDay), String.valueOf(mMonth + 1),
-                String.valueOf(mYear)));
+                String.valueOf(mYear));
+        mDatePickerBtn.setText(mDate);
         if (btnIsRed) {
             mDatePickerBtn.setTextColor(Color.BLACK);
             btnIsRed = false;
