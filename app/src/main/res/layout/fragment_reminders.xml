@@ -10,4 +10,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
 
+  <TextView
+    android:visibility="gone"
+    android:background="#cfcfcf"
+    android:text="@string/no_call_reminders"
+    android:gravity="center"
+    android:id="@+id/tv_emptyView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
 </FrameLayout>

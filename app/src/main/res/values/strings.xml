@@ -28,10 +28,13 @@
   <string name="phone_hint">+212661324257</string>
   <string name="name_hint">Bouchra Diraoui</string>
   <string name="notification_body">%1$s %2$s</string>
+  <string name="no_call_reminders">You have no call reminders</string>
+  <string name="no_logs">You have no logs</string>
   <!-- notification actions -->
   <string name="notification_action_call">Call</string>
   <string name="notification_action_cancel">Cancel</string>
   <string name="cancel_button">Cancel</string>
   <string name="call_now_btn">Call</string>
   <string name="log_delete_btn">Delete</string>
+
 </resources>

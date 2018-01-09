@@ -8,4 +8,12 @@
     android:id="@+id/logs_frag_rv"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />
+  <TextView
+    android:id="@+id/tv_emptyView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#cfcfcf"
+    android:gravity="center"
+    android:text="@string/no_logs"
+    android:visibility="gone" />
 </FrameLayout>

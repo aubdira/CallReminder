@@ -14,16 +14,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.RemindersAdapter;
+import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.events.CallNowEvent;
 import com.example.aub.callreminder.events.ContactIdEvent;
 import com.example.aub.callreminder.events.ContactListEvent;
 import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
 import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -33,6 +36,7 @@ public class RemindersFragment extends Fragment implements ReminderFragView {
     private static final String TAG = "RemindersFragment";
 
     @BindView(R.id.reminder_frag_rv) RecyclerView mReminderFragRv;
+    @BindView(R.id.tv_emptyView) TextView mTvEmptyView;
     private Unbinder unbinder;
 
     private ReminderFragPresenter mPresenter;
@@ -62,9 +66,18 @@ public class RemindersFragment extends Fragment implements ReminderFragView {
     }
 
     @Subscribe public void displayData(ContactListEvent event) {
-        mRemindersAdapter = new RemindersAdapter(event.getContactList(), getContext());
-        mReminderFragRv.setAdapter(mRemindersAdapter);
-        mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        List<Contact> contactList = event.getContactList();
+        if (contactList.isEmpty()) {
+            mReminderFragRv.setVisibility(View.GONE);
+            mTvEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mReminderFragRv.setVisibility(View.VISIBLE);
+            mTvEmptyView.setVisibility(View.GONE);
+
+            mRemindersAdapter = new RemindersAdapter(contactList, getContext());
+            mReminderFragRv.setAdapter(mRemindersAdapter);
+            mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
     }
 
     @Override public void onDestroyView() {

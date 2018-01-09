@@ -19,16 +19,13 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+//    private static final String TAG = "MainActivity";
 
     @BindView(R.id.toolBar) Toolbar mToolBar;
     @BindView(R.id.main_view_pager) ViewPager mViewPager;
     @BindView(R.id.tabLayout) TabLayout mTabLayout;
 
-    private MainPagerAdapter mPagerAdapter;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -37,13 +34,12 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolBar);
 
-        mPagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
-        mViewPager.setAdapter(mPagerAdapter);
+        MainPagerAdapter pagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
+        mViewPager.setAdapter(pagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
-    @OnClick(R.id.fab_add_reminder)
-    void addReminder() {
+    @OnClick(R.id.fab_add_reminder) void addReminder() {
         Intent intent = new Intent(this, AddReminderActivity.class);
         startActivity(intent);
     }

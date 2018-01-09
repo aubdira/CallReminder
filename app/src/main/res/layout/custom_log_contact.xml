@@ -20,6 +20,7 @@
     <TextView
       android:id="@+id/tv_log_contact_name"
       android:textStyle="bold"
+      android:textSize="18sp"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentLeft="true"
@@ -36,7 +37,7 @@
       android:layout_alignParentLeft="true"
       android:layout_alignParentStart="true"
       android:layout_below="@id/tv_log_contact_name"
-      android:textSize="18sp"
+      android:textSize="16sp"
       tools:text="@string/phone_hint" />
     <TextView
       android:id="@+id/tv_log_date_time"

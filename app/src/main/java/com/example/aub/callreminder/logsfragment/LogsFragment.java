@@ -8,14 +8,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.LogsFragAdapter;
+import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.events.ContactLogsListEvent;
 import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
 import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
+import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -23,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class LogsFragment extends Fragment implements LogsFragView {
 
     @BindView(R.id.logs_frag_rv) RecyclerView mLogsFragRv;
+    @BindView(R.id.tv_emptyView) TextView mTvEmptyView;
     Unbinder unbinder;
 
     private LogsFragPresenter mPresenter;
@@ -53,9 +57,18 @@ public class LogsFragment extends Fragment implements LogsFragView {
     }
 
     @Subscribe public void displayData(ContactLogsListEvent event) {
-        mAdapter = new LogsFragAdapter(event.getContactLogsList(), getContext());
-        mLogsFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
-        mLogsFragRv.setAdapter(mAdapter);
+        List<Contact> contactLogsList = event.getContactLogsList();
+        if (contactLogsList.isEmpty()) {
+            mLogsFragRv.setVisibility(View.GONE);
+            mTvEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mLogsFragRv.setVisibility(View.VISIBLE);
+            mTvEmptyView.setVisibility(View.GONE);
+
+            mAdapter = new LogsFragAdapter(contactLogsList, getContext());
+            mLogsFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
+            mLogsFragRv.setAdapter(mAdapter);
+        }
     }
 
     @Subscribe public void deleteAdapter(DeleteLogAdapterEvent event) {
