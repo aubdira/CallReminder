@@ -6,6 +6,7 @@
   android:id="@+id/constraintLayout"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  android:background="@drawable/bg_gradient"
   tools:context="com.example.aub.callreminder.addreminder.AddReminderActivity">
 
   <include
@@ -33,10 +34,12 @@
       android:id="@+id/et_contact_name"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:hint="@string/et_name_hint" />
+      android:hint="@string/et_name_hint"
+      android:textColor="@color/whiteText" />
   </android.support.design.widget.TextInputLayout>
   <Button
     android:id="@+id/btn_from_contact"
+    style="@style/btns_style"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
@@ -49,8 +52,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_weight="1"
     app:layout_constraintStart_toEndOf="@+id/textInputLayout"
-    app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-    tools:ignore="RtlSymmetry" />
+    app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
   <android.support.design.widget.TextInputLayout
     android:id="@+id/textInputLayout2"
@@ -71,15 +73,19 @@
       android:drawablePadding="8dp"
       android:drawableStart="@drawable/phone"
       android:hint="@string/phone_number_hint"
-      android:inputType="phone" />
+      android:inputType="phone"
+      android:textColor="@color/whiteText" />
   </android.support.design.widget.TextInputLayout>
   <Button
     android:id="@+id/btn_time_picker"
+    style="@style/btns_style"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="24dp"
     android:layout_marginStart="8dp"
+    android:layout_marginEnd="4dp"
     android:layout_marginLeft="8dp"
+    android:layout_marginRight="4dp"
     android:drawableLeft="@drawable/clock"
     android:drawableStart="@drawable/clock"
     android:text="@string/time_hint"
@@ -90,10 +96,13 @@
     app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
   <Button
     android:id="@+id/btn_date_picker"
+    style="@style/btns_style"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="24dp"
+    android:layout_marginStart="4dp"
     android:layout_marginEnd="8dp"
+    android:layout_marginLeft="4dp"
     android:layout_marginRight="8dp"
     android:drawableLeft="@drawable/date"
     android:drawableStart="@drawable/date"
@@ -103,7 +112,7 @@
     app:layout_constraintHorizontal_weight="1"
     app:layout_constraintStart_toEndOf="@+id/btn_time_picker"
     app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
-  <EditText
+  <android.support.design.widget.TextInputEditText
     android:id="@+id/et_reminder_reason"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -116,6 +125,8 @@
     android:hint="@string/description_hint"
     android:inputType="textMultiLine|textAutoCorrect"
     android:maxLength="80"
+    android:textAppearance="?android:attr/textAppearanceMediumInverse"
+    android:textColor="@color/whiteText"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/btn_time_picker" />
@@ -123,11 +134,12 @@
   <Button
     android:id="@+id/btn_set_reminder"
     style="@style/SetReminderBtnStyle"
-    android:layout_width="0dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="24dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
+    android:layout_marginTop="32dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/bg_button_secondary"
     android:text="@string/set_reminder_btn_text"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"

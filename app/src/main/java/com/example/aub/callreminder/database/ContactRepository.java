@@ -30,7 +30,7 @@ public class ContactRepository {
     }
 
     public List<Contact> getContactsLogListByTimeASC() {
-        return contactDao.getContactsLogListByTimeASC();
+        return contactDao.getContactsLogListByTimeDESC();
     }
 
     public long insertContact(Contact contact) {

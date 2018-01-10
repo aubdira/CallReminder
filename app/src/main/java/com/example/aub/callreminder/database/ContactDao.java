@@ -22,8 +22,8 @@ public interface ContactDao {
     @Query("SELECT * FROM contacts_info WHERE is_log = 0 ORDER BY reminder_time ASC")
     List<Contact> getContactsListByTimeASC();
 
-    @Query("SELECT * FROM contacts_info WHERE is_log = 1 ORDER BY reminder_time ASC")
-    List<Contact> getContactsLogListByTimeASC();
+    @Query("SELECT * FROM contacts_info WHERE is_log = 1 ORDER BY reminder_time DESC")
+    List<Contact> getContactsLogListByTimeDESC();
 
     @Query("SELECT * FROM contacts_info WHERE reminder_time = :time")
     Contact getContactByTime(long time);

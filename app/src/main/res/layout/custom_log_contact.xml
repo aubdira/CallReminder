@@ -11,6 +11,7 @@
   android:layout_marginEnd="4dp"
   android:layout_marginLeft="4dp"
   android:layout_marginRight="4dp"
+  app:cardBackgroundColor="@color/colorPrimaryLight"
   app:contentPadding="8dp">
 
   <RelativeLayout
@@ -18,11 +19,10 @@
     android:layout_height="match_parent">
 
     <TextView
+      style="@style/custom_item_text_style"
       android:id="@+id/tv_log_contact_name"
       android:textStyle="bold"
       android:textSize="18sp"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
       android:layout_alignParentLeft="true"
       android:layout_alignParentStart="true"
       android:layout_alignParentTop="true"
@@ -30,9 +30,8 @@
       android:layout_toRightOf="@id/tv_log_phone_number"
       tools:text="@string/name_hint" />
     <TextView
+      style="@style/custom_item_text_style"
       android:id="@+id/tv_log_phone_number"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
       android:layout_marginTop="4dp"
       android:layout_alignParentLeft="true"
       android:layout_alignParentStart="true"
@@ -40,9 +39,8 @@
       android:textSize="16sp"
       tools:text="@string/phone_hint" />
     <TextView
+      style="@style/custom_item_text_style"
       android:id="@+id/tv_log_date_time"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
       android:layout_marginTop="4dp"
       android:layout_alignParentLeft="true"
       android:layout_alignParentStart="true"
@@ -50,9 +48,8 @@
       android:textSize="20sp"
       tools:text="@string/date_time_hint" />
     <TextView
+      style="@style/custom_item_text_style"
       android:id="@+id/tv_log_reminder_reason"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
       android:layout_marginTop="4dp"
       android:layout_alignParentLeft="true"
       android:layout_alignParentStart="true"
@@ -60,6 +57,9 @@
       tools:text="@string/no_reason_hint" />
 
     <Button
+      android:padding="8dp"
+      android:background="@drawable/bg_button_primary_light"
+      android:textColor="@color/whiteText"
       android:id="@+id/delete_btn"
       android:layout_width="110dp"
       android:layout_height="wrap_content"

@@ -3,6 +3,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  android:background="@drawable/bg_gradient"
   tools:context="com.example.aub.callreminder.remindersfragment.RemindersFragment">
 
   <android.support.v7.widget.RecyclerView
@@ -14,8 +15,10 @@
     android:id="@+id/tv_emptyView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
+    android:background="@color/colorPrimaryLight"
     android:gravity="center"
     android:text="@string/no_call_reminders"
-    android:visibility="gone" />
+    android:textColor="@color/whiteText"
+    android:visibility="gone"
+    />
 </FrameLayout>

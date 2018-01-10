@@ -37,7 +37,7 @@ public class AddReminderActivity extends FragmentActivity implements
 
     @BindView(R.id.et_contact_name) TextInputEditText mContactNameET;
     @BindView(R.id.et_contact_phone_number) TextInputEditText mContactPhoneNumberET;
-    @BindView(R.id.et_reminder_reason) EditText mReminderReasonET;
+    @BindView(R.id.et_reminder_reason) TextInputEditText mReminderReasonET;
     @BindView(R.id.btn_time_picker) Button mTimePickerBtn;
     @BindView(R.id.btn_date_picker) Button mDatePickerBtn;
 
