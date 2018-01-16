@@ -1,13 +1,11 @@
 package com.example.aub.callreminder.logsfragment;
 
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
+import android.util.Log;
 import com.example.aub.callreminder.App;
-import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.database.ContactRepository;
-import com.example.aub.callreminder.events.ContactListEvent;
 import com.example.aub.callreminder.events.ContactLogsListEvent;
-import java.util.List;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -19,24 +17,22 @@ import org.greenrobot.eventbus.EventBus;
 public class LogsFragInteractorImpl implements LogsFragInteractor {
 
     private ContactRepository mRepository;
-    private List<Contact> contactsList;
+
+    private static final String TAG = "LogsFragInteractorImpl";
 
     LogsFragInteractorImpl() {
         mRepository = new ContactRepository(App.getAppContext());
     }
 
-    @SuppressLint("StaticFieldLeak") @Override public void loadDataFromDataBase() {
-        new AsyncTask<Void, Void, List<Contact>>() {
-            @Override protected List<Contact> doInBackground(Void... voids) {
-                contactsList = mRepository.getContactsLogListByTimeASC();
-                return contactsList;
-            }
-
-            @Override protected void onPostExecute(List<Contact> contacts) {
-                ContactLogsListEvent event = new ContactLogsListEvent();
-                event.setContactLogsList(contacts);
-                EventBus.getDefault().post(event);
-            }
-        }.execute();
+    @Override public void loadDataFromDataBase() {
+        mRepository.getContactsLogListByTimeDESC()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(contacts -> {
+                    ContactLogsListEvent event = new ContactLogsListEvent();
+                    event.setContactLogsList(contacts);
+                    EventBus.getDefault().post(event);
+                    Log.d(TAG, "loadDataFromDataBase: contacts size " + contacts.size());
+                });
     }
 }

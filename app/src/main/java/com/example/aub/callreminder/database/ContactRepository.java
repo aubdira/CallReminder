@@ -1,6 +1,7 @@
 package com.example.aub.callreminder.database;
 
 import android.content.Context;
+import io.reactivex.Flowable;
 import java.util.List;
 
 
@@ -17,19 +18,15 @@ public class ContactRepository {
         contactDao = DatabaseCreator.getAppDatabase(context).getContactDao();
     }
 
-    public Contact getContactById(int id) {
-        return contactDao.getContactById(id);
-    }
+//    public Maybe<Contact> getContactById(int id) {
+//        return contactDao.getContactById(id);
+//    }
 
-    public Contact getContactByTime(long time) {
-        return contactDao.getContactByTime(time);
-    }
-
-    public List<Contact> getContactsListByTimeASC() {
+    public Flowable<List<Contact>> getContactsListByTimeASC() {
         return contactDao.getContactsListByTimeASC();
     }
 
-    public List<Contact> getContactsLogListByTimeASC() {
+    public Flowable<List<Contact>> getContactsLogListByTimeDESC() {
         return contactDao.getContactsLogListByTimeDESC();
     }
 
@@ -41,7 +38,7 @@ public class ContactRepository {
         contactDao.deleteContact(contact);
     }
 
-    public void updateAsLog(Contact contact) {
-        contactDao.updateContactAsLog(contact);
+    public int updateAsLog(long time) {
+        return contactDao.updateContactAsLog(time);
     }
 }

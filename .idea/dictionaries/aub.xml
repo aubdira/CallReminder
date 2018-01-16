@@ -2,6 +2,7 @@
   <dictionary name="aub">
     <words>
       <w>callreminder</w>
+      <w>rxjava</w>
     </words>
   </dictionary>
 </component>

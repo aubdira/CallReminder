@@ -1,17 +1,14 @@
 package com.example.aub.callreminder.adapters;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +22,9 @@ import com.example.aub.callreminder.database.ContactRepository;
 import com.example.aub.callreminder.events.CallNowEvent;
 import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
 import com.example.aub.callreminder.utils.DateTimeConverter;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 
@@ -74,46 +74,37 @@ public class RemindersAdapter extends Adapter<ViewHolder> {
         }
 
         // handel cancel button
-        holder.mCancelBtn.setOnClickListener(new OnClickListener() {
-            @SuppressLint("StaticFieldLeak") @Override public void onClick(View v) {
-                // delete(for now) the reminder from the database
-                new AsyncTask<Void, Void, Void>() {
-                    @Override protected Void doInBackground(Void... voids) {
-                        mRepository.deleteContact(currentContact);
+        holder.mCancelBtn.setOnClickListener(v -> {
+            // delete(for now) the reminder from the database
+            Completable.fromAction(() -> {
+                mRepository.deleteContact(currentContact);
 
-                        // cancel the alarm manager
-                        Intent intent = new Intent(mContext, NotificationPublisher.class);
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                                mContext,
-                                (int) currentContact.getReminderTime(),
-                                intent,
-                                PendingIntent.FLAG_UPDATE_CURRENT);
+                // cancel the alarm manager
+                Intent intent = new Intent(mContext, NotificationPublisher.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        mContext,
+                        (int) currentContact.getReminderTime(),
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
-                        AlarmManager alarmManager = (AlarmManager) mContext
-                                .getSystemService(Context.ALARM_SERVICE);
-                        if (alarmManager != null) {
-                            alarmManager.cancel(pendingIntent);
-                        }
+                AlarmManager alarmManager = (AlarmManager) mContext
+                        .getSystemService(Context.ALARM_SERVICE);
+                if (alarmManager != null) {
+                    alarmManager.cancel(pendingIntent);
+                }
 
-                        return null;
-                    }
-
-                    @Override protected void onPostExecute(Void v) {
-                        super.onPostExecute(v);
+            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
                         // update the adapter
                         DeleteLogAdapterEvent event = new DeleteLogAdapterEvent();
                         EventBus.getDefault().post(event);
-                    }
-                }.execute();
-            }
+                    });
         });
 
         // handel call button
-        holder.mCallNowBtn.setOnClickListener(new OnClickListener() {
-            @Override public void onClick(View v) {
-                CallNowEvent event = new CallNowEvent(currentContact.getContactPhoneNumber());
-                EventBus.getDefault().post(event);
-            }
+        holder.mCallNowBtn.setOnClickListener(v -> {
+            CallNowEvent event = new CallNowEvent(currentContact.getContactPhoneNumber());
+            EventBus.getDefault().post(event);
         });
     }
 

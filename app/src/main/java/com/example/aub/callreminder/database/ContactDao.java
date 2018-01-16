@@ -5,6 +5,8 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import java.util.List;
 
 
@@ -17,20 +19,18 @@ import java.util.List;
 public interface ContactDao {
 
     @Query("SELECT * FROM contacts_info WHERE id = :id")
-    Contact getContactById(int id);
+    Maybe<Contact> getContactById(int id);
 
     @Query("SELECT * FROM contacts_info WHERE is_log = 0 ORDER BY reminder_time ASC")
-    List<Contact> getContactsListByTimeASC();
+    Flowable<List<Contact>> getContactsListByTimeASC();
 
     @Query("SELECT * FROM contacts_info WHERE is_log = 1 ORDER BY reminder_time DESC")
-    List<Contact> getContactsLogListByTimeDESC();
-
-    @Query("SELECT * FROM contacts_info WHERE reminder_time = :time")
-    Contact getContactByTime(long time);
+    Flowable<List<Contact>> getContactsLogListByTimeDESC();
 
     @Insert long insertContact(Contact contact);
 
-    @Delete void deleteContact(Contact contact);
+    @Query("UPDATE contacts_info SET is_log = 1 WHERE reminder_time = :time")
+    int updateContactAsLog(long time);
 
-    @Update void updateContactAsLog(Contact contact);
+    @Delete void deleteContact(Contact contact);
 }

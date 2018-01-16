@@ -1,6 +1,5 @@
 package com.example.aub.callreminder.addreminder;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -8,18 +7,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.util.Log;
 import com.example.aub.callreminder.App;
+import com.example.aub.callreminder.broadcastreceivers.NotificationPublisher;
 import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.database.ContactRepository;
 import com.example.aub.callreminder.events.ContactIdEvent;
 import com.example.aub.callreminder.events.ContactNamePhoneEvent;
 import com.example.aub.callreminder.events.NotifyMeEvent;
 import com.example.aub.callreminder.events.StoreContactFinishedEvent;
-import com.example.aub.callreminder.broadcastreceivers.NotificationPublisher;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -92,27 +95,34 @@ public class AddReminderInteractorImpl implements AddReminderInteractor {
         EventBus.getDefault().post(event);
     }
 
-    @SuppressLint("StaticFieldLeak")
     @Override public void storeContact(final Contact contact) {
 
-        new AsyncTask<Void, Void, Long>() {
-            @Override protected Long doInBackground(Void... voids) {
-                // insert the new contact
-                return mRepository.insertContact(contact);
-            }
+        Single.fromCallable(() -> {
+            // insert the new contact
+            return mRepository.insertContact(contact);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Long>() {
+                    @Override public void onSubscribe(Disposable d) {
+                    }
 
-            @Override protected void onPostExecute(Long id) {
-                super.onPostExecute(id);
-                EventBus eventBus = EventBus.getDefault();
+                    @Override public void onSuccess(Long id) {
+                        EventBus eventBus = EventBus.getDefault();
 
-                ContactIdEvent event = new ContactIdEvent();
-                event.setId(id);
-                eventBus.post(event);
+                        if (id != null) {
+                            ContactIdEvent event = new ContactIdEvent();
+                            event.setId(id);
+                            eventBus.post(event);
+                        }
 
-                StoreContactFinishedEvent finishedEvent = new StoreContactFinishedEvent();
-                eventBus.post(finishedEvent);
-            }
-        }.execute();
+                        StoreContactFinishedEvent finishedEvent = new StoreContactFinishedEvent();
+                        eventBus.post(finishedEvent);
+                    }
+
+                    @Override public void onError(Throwable e) {
+                        Log.d(TAG, "onError: unable to insert contact");
+                    }
+                });
     }
 
     /**

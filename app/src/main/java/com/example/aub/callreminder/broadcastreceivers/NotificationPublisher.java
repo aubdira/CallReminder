@@ -2,7 +2,6 @@ package com.example.aub.callreminder.broadcastreceivers;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Notification.BigTextStyle;
 import android.app.NotificationManager;
@@ -12,12 +11,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.media.RingtoneManager;
-import android.os.AsyncTask;
 import android.util.Log;
 import com.example.aub.callreminder.R;
-import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.database.ContactRepository;
 import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -36,7 +36,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static final int NOTIFICATION_ID = 1;
     public static final String TIME = "time_in_millis";
 
-    @SuppressLint("StaticFieldLeak") @Override public void onReceive(final Context context, Intent intent) {
+    @Override public void onReceive(final Context context, Intent intent) {
         Log.d(TAG, "onReceive: broadcast started");
         if (intent != null) {
             String name = intent.getStringExtra(NAME);
@@ -45,38 +45,29 @@ public class NotificationPublisher extends BroadcastReceiver {
             final long time = intent.getLongExtra(TIME, 0);
             NotificationManager manager =
                     (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-            Notification notification = getNotification(context, name, phone, reason, time);
+            Notification notification = getNotification(context, name, phone, reason);
             if (manager != null) {
                 manager.notify(NOTIFICATION_ID, notification);
             }
 
             // after canceling or accepting to call the number
             // update the reminder as 'log'
-            new AsyncTask<Void, Void, Void>() {
-                @Override protected Void doInBackground(Void... voids) {
-                    ContactRepository mRepository = new ContactRepository(context);
-                    Contact contact = mRepository.getContactByTime(time);
-                    if (contact != null) {
-                        contact.setIsLog(1);
-                        mRepository.updateAsLog(contact);
-                    } else {
-                        Log.d(TAG, "onHandleIntent: contact is null");
-                    }
-                    return null;
-                }
+            Completable.fromAction(() -> {
+                ContactRepository mRepository = new ContactRepository(context);
+                int id = mRepository.updateAsLog(time);
+                Log.d(TAG, "onReceive: id of contact updated " + id);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        UpdateContactAsLogEvent event = new UpdateContactAsLogEvent();
+                        EventBus.getDefault().post(event);
+                    }, throwable -> Log.d(TAG, "onReceive: Unable to update contact"));
 
-                @Override protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
-                    UpdateContactAsLogEvent event = new UpdateContactAsLogEvent();
-                    EventBus.getDefault().post(event);
-                }
-            }.execute();
         }
     }
 
     private Notification getNotification(Context context, String contactName, String phoneNumber,
-            String reason, long time) {
-        Log.d(TAG, "getNotification: time "+time);
+            String reason) {
         Resources resources = context.getResources();
         long[] pattern = {0, 300, 400, 300, 100, 0};
 
@@ -97,7 +88,6 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // notification cancel action
         Intent cancelIntent = new Intent();
-        cancelIntent.putExtra("time_in_millis", time);
         cancelIntent.setAction(NotificationReceiver.CANCEL_ACTION);
         PendingIntent cancelPending = PendingIntent
                 .getBroadcast(context, 3, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -107,7 +97,6 @@ public class NotificationPublisher extends BroadcastReceiver {
         // notification call action
         Intent callIntent = new Intent();
         callIntent.putExtra("phone_number", phoneNumber);
-        callIntent.putExtra("time_in_millis", time);
         callIntent.setAction(NotificationReceiver.CALL_ACTION);
         PendingIntent callPending = PendingIntent
                 .getBroadcast(context, 3, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
