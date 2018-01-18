@@ -65,7 +65,7 @@ public class LogsFragment extends Fragment implements LogsFragView {
             mLogsFragRv.setVisibility(View.VISIBLE);
             mTvEmptyView.setVisibility(View.GONE);
 
-            mAdapter = new LogsFragAdapter(contactLogsList, getContext());
+            mAdapter = new LogsFragAdapter(contactLogsList);
             mLogsFragRv.setAdapter(mAdapter);
             mLogsFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
         }

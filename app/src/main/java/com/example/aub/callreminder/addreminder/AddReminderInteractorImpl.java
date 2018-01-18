@@ -23,6 +23,7 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -35,11 +36,11 @@ public class AddReminderInteractorImpl implements AddReminderInteractor {
 
     private static final String TAG = "AddReminderInteractorIm";
 
-    private ContactRepository mRepository;
-    private Context mContext = App.getAppContext();
+    @Inject ContactRepository mRepository;
+    @Inject Context mContext;
 
     AddReminderInteractorImpl() {
-        mRepository = new ContactRepository(mContext);
+        App.getContactRepositoryComponent().inject(this);
     }
 
     /**
@@ -155,6 +156,5 @@ public class AddReminderInteractorImpl implements AddReminderInteractor {
         NotifyMeEvent event = new NotifyMeEvent();
         EventBus.getDefault().post(event);
     }
-
 
 }

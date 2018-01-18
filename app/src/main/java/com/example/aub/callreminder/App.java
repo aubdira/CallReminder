@@ -1,7 +1,10 @@
 package com.example.aub.callreminder;
 
 import android.app.Application;
-import android.content.Context;
+import com.example.aub.callreminder.di.DaggerRepositoryContactComponent;
+import com.example.aub.callreminder.di.RepositoryContactComponent;
+import com.example.aub.callreminder.di.module.AppModule;
+import com.example.aub.callreminder.di.module.RepositoryContactModule;
 
 
 /**
@@ -11,14 +14,18 @@ import android.content.Context;
 
 public class App extends Application {
 
-    private static Context context;
+    private static RepositoryContactComponent sRepositoryContactComponent;
 
     @Override public void onCreate() {
         super.onCreate();
-        context = getApplicationContext();
+
+        sRepositoryContactComponent = DaggerRepositoryContactComponent.builder()
+                .appModule(new AppModule(this))
+                .repositoryContactModule(new RepositoryContactModule())
+                .build();
     }
 
-    public static Context getAppContext() {
-        return context;
+    public static RepositoryContactComponent getContactRepositoryComponent() {
+        return sRepositoryContactComponent;
     }
 }

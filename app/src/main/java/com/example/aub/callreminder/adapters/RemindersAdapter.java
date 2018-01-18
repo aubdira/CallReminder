@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.example.aub.callreminder.App;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.RemindersAdapter.ViewHolder;
 import com.example.aub.callreminder.broadcastreceivers.NotificationPublisher;
@@ -26,6 +27,7 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import java.util.List;
+import javax.inject.Inject;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -37,13 +39,12 @@ import org.greenrobot.eventbus.EventBus;
 public class RemindersAdapter extends Adapter<ViewHolder> {
 
     private List<Contact> mContactList;
-    private ContactRepository mRepository;
-    private Context mContext;
+    @Inject ContactRepository mRepository;
+    @Inject Context mContext;
 
-    public RemindersAdapter(List<Contact> contactList, Context context) {
+    public RemindersAdapter(List<Contact> contactList) {
         mContactList = contactList;
-        mRepository = new ContactRepository(context);
-        mContext = context;
+        App.getContactRepositoryComponent().inject(this);
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

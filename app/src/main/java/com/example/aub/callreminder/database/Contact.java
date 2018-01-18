@@ -32,10 +32,6 @@ public class Contact {
     @ColumnInfo(name = "is_log")
     private int isLog = 0;
 
-    /*
-        Constructor
-     */
-
     public Contact(String contactName, String contactPhoneNumber, long reminderTime,
             String reminderReason) {
         this.contactName = contactName;
@@ -43,11 +39,6 @@ public class Contact {
         this.reminderTime = reminderTime;
         this.reminderReason = reminderReason;
     }
-
-    /*
-        Getters and Setters
-     */
-
 
     public int getId() {
         return id;

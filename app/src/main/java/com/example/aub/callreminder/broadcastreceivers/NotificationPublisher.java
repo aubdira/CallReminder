@@ -12,12 +12,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.media.RingtoneManager;
 import android.util.Log;
+import com.example.aub.callreminder.App;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.database.ContactRepository;
 import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -36,6 +38,12 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static final int NOTIFICATION_ID = 1;
     public static final String TIME = "time_in_millis";
 
+    @Inject ContactRepository mRepository;
+
+    public NotificationPublisher() {
+        App.getContactRepositoryComponent().inject(this);
+    }
+
     @Override public void onReceive(final Context context, Intent intent) {
         Log.d(TAG, "onReceive: broadcast started");
         if (intent != null) {
@@ -53,7 +61,6 @@ public class NotificationPublisher extends BroadcastReceiver {
             // after canceling or accepting to call the number
             // update the reminder as 'log'
             Completable.fromAction(() -> {
-                ContactRepository mRepository = new ContactRepository(context);
                 int id = mRepository.updateAsLog(time);
                 Log.d(TAG, "onReceive: id of contact updated " + id);
             }).subscribeOn(Schedulers.io())

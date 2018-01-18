@@ -1,6 +1,5 @@
 package com.example.aub.callreminder.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -11,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.example.aub.callreminder.App;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.LogsFragAdapter.ViewHolder;
 import com.example.aub.callreminder.database.Contact;
@@ -21,6 +21,7 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import java.util.List;
+import javax.inject.Inject;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -32,11 +33,11 @@ import org.greenrobot.eventbus.EventBus;
 public class LogsFragAdapter extends Adapter<ViewHolder> {
 
     private List<Contact> mContactList;
-    private ContactRepository mRepository;
+    @Inject ContactRepository mRepository;
 
-    public LogsFragAdapter(List<Contact> contactList, Context context) {
+    public LogsFragAdapter(List<Contact> contactList) {
         mContactList = contactList;
-        mRepository = new ContactRepository(context);
+        App.getContactRepositoryComponent().inject(this);
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

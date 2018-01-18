@@ -6,6 +6,7 @@ import com.example.aub.callreminder.database.ContactRepository;
 import com.example.aub.callreminder.events.ContactLogsListEvent;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import javax.inject.Inject;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -16,12 +17,12 @@ import org.greenrobot.eventbus.EventBus;
 
 public class LogsFragInteractorImpl implements LogsFragInteractor {
 
-    private ContactRepository mRepository;
+    @Inject ContactRepository mRepository;
 
     private static final String TAG = "LogsFragInteractorImpl";
 
     LogsFragInteractorImpl() {
-        mRepository = new ContactRepository(App.getAppContext());
+        App.getContactRepositoryComponent().inject(this);
     }
 
     @Override public void loadDataFromDataBase() {

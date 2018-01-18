@@ -8,6 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import java.util.List;
+import javax.inject.Inject;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -18,10 +19,10 @@ import org.greenrobot.eventbus.EventBus;
 
 public class ReminderFragInteractorImpl implements ReminderFragInteractor {
 
-    private ContactRepository mRepository;
+    @Inject ContactRepository mRepository;
 
     ReminderFragInteractorImpl() {
-        mRepository = new ContactRepository(App.getAppContext());
+        App.getContactRepositoryComponent().inject(this);
     }
 
     @Override public void loadDataFromDatabase() {

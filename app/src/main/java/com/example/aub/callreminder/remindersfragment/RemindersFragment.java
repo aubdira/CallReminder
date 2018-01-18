@@ -74,7 +74,7 @@ public class RemindersFragment extends Fragment implements ReminderFragView {
             mReminderFragRv.setVisibility(View.VISIBLE);
             mTvEmptyView.setVisibility(View.GONE);
 
-            mRemindersAdapter = new RemindersAdapter(contactList, getContext());
+            mRemindersAdapter = new RemindersAdapter(contactList);
             mReminderFragRv.setAdapter(mRemindersAdapter);
             mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
         }
