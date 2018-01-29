@@ -1,5 +1,6 @@
 package com.example.aub.callreminder.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -22,7 +23,7 @@ public interface ContactDao {
     Maybe<Contact> getContactById(int id);
 
     @Query("SELECT * FROM contacts_info WHERE is_log = 0 ORDER BY reminder_time ASC")
-    Flowable<List<Contact>> getContactsListByTimeASC();
+    LiveData<List<Contact>> getContactsListByTimeASC();
 
     @Query("SELECT * FROM contacts_info WHERE is_log = 1 ORDER BY reminder_time DESC")
     Flowable<List<Contact>> getContactsLogListByTimeDESC();

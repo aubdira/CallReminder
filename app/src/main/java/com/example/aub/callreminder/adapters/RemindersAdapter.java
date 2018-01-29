@@ -42,9 +42,14 @@ public class RemindersAdapter extends Adapter<ViewHolder> {
     @Inject ContactRepository mRepository;
     @Inject Context mContext;
 
-    public RemindersAdapter(List<Contact> contactList) {
-        mContactList = contactList;
+    public RemindersAdapter(List<Contact> contacts) {
         App.getContactRepositoryComponent().inject(this);
+        mContactList = contacts;
+    }
+
+    public void setData(List<Contact> data) {
+        this.mContactList = data;
+        notifyDataSetChanged();
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

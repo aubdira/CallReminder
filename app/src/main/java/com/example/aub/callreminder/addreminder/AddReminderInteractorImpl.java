@@ -14,7 +14,6 @@ import com.example.aub.callreminder.App;
 import com.example.aub.callreminder.broadcastreceivers.NotificationPublisher;
 import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.database.ContactRepository;
-import com.example.aub.callreminder.events.ContactIdEvent;
 import com.example.aub.callreminder.events.ContactNamePhoneEvent;
 import com.example.aub.callreminder.events.NotifyMeEvent;
 import com.example.aub.callreminder.events.StoreContactFinishedEvent;
@@ -109,13 +108,6 @@ public class AddReminderInteractorImpl implements AddReminderInteractor {
 
                     @Override public void onSuccess(Long id) {
                         EventBus eventBus = EventBus.getDefault();
-
-                        if (id != null) {
-                            ContactIdEvent event = new ContactIdEvent();
-                            event.setId(id);
-                            eventBus.post(event);
-                        }
-
                         StoreContactFinishedEvent finishedEvent = new StoreContactFinishedEvent();
                         eventBus.post(finishedEvent);
                     }

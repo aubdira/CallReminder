@@ -1,5 +1,6 @@
 package com.example.aub.callreminder.database;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import io.reactivex.Flowable;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ContactRepository {
 //        return contactDao.getContactById(id);
 //    }
 
-    public Flowable<List<Contact>> getContactsListByTimeASC() {
+    public LiveData<List<Contact>> getContactsListByTimeASC() {
         return contactDao.getContactsListByTimeASC();
     }
 

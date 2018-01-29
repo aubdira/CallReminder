@@ -1,6 +1,5 @@
 package com.example.aub.callreminder.di.module;
 
-import android.app.Application;
 import android.content.Context;
 import com.example.aub.callreminder.database.ContactRepository;
 import dagger.Module;

@@ -2,11 +2,11 @@ package com.example.aub.callreminder.remindersfragment;
 
 
 import android.Manifest.permission;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,32 +22,25 @@ import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.RemindersAdapter;
 import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.events.CallNowEvent;
-import com.example.aub.callreminder.events.ContactIdEvent;
-import com.example.aub.callreminder.events.ContactListEvent;
-import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
-import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
+import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 
-public class RemindersFragment extends Fragment implements ReminderFragView {
+public class RemindersFragment extends Fragment {
 
-    private static final String TAG = "RemindersFragment";
+//    private static final String TAG = "RemindersFragment";
 
     @BindView(R.id.reminder_frag_rv) RecyclerView mReminderFragRv;
     @BindView(R.id.tv_emptyView) TextView mTvEmptyView;
     private Unbinder unbinder;
 
-    private ReminderFragPresenter mPresenter;
+    private RemindersFragViewModel remindersFragViewModel;
+    private List<Contact> contactList = new ArrayList<>();
     private RemindersAdapter mRemindersAdapter;
 
     public RemindersFragment() {
-    }
-
-    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mPresenter = new ReminderFragPresenterImpl(this);
     }
 
     @Override
@@ -55,54 +48,47 @@ public class RemindersFragment extends Fragment implements ReminderFragView {
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reminders, container, false);
+
         unbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
+
+        setupRecyclerView();
+
+        remindersFragViewModel = ViewModelProviders.of(this).get(RemindersFragViewModel.class);
+        remindersFragViewModel.getData().observe(this, contacts -> {
+            contactList = contacts;
+            mRemindersAdapter.setData(contacts);
+            updateUi(contacts);
+        });
+
         return view;
     }
 
-    @Override public void onStart() {
-        super.onStart();
-        mPresenter.loadData();
+    private void setupRecyclerView() {
+        mRemindersAdapter = new RemindersAdapter(contactList);
+        mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mReminderFragRv.setAdapter(mRemindersAdapter);
     }
 
-    @Subscribe public void displayData(ContactListEvent event) {
-        List<Contact> contactList = event.getContactList();
-        if (contactList.isEmpty()) {
+    private void updateUi(List<Contact> contacts) {
+        if (contacts.isEmpty()) {
             mReminderFragRv.setVisibility(View.GONE);
             mTvEmptyView.setVisibility(View.VISIBLE);
         } else {
             mReminderFragRv.setVisibility(View.VISIBLE);
             mTvEmptyView.setVisibility(View.GONE);
-
-            mRemindersAdapter = new RemindersAdapter(contactList);
-            mReminderFragRv.setAdapter(mRemindersAdapter);
-            mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
         }
     }
 
     @Override public void onDestroyView() {
         super.onDestroyView();
-        mPresenter.onDetach();
         unbinder.unbind();
         EventBus.getDefault().unregister(this);
     }
 
-
-    @Subscribe public void onEvent(ContactIdEvent event) {
-        mRemindersAdapter.notifyItemInserted((int) event.getId());
-        mReminderFragRv.scrollToPosition((int) event.getId());
-    }
-
-    @Subscribe public void onEvent(DeleteLogAdapterEvent event) {
-        mPresenter.loadData();
-    }
-
-    @Subscribe public void updateAdapter(UpdateContactAsLogEvent event) {
-        mPresenter.loadData();
-    }
-
     @Subscribe public void onEvent(CallNowEvent event) {
-        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + event.getContactPhoneNumber()));
+        Intent callIntent = new Intent(Intent.ACTION_CALL,
+                Uri.parse("tel:" + event.getContactPhoneNumber()));
         callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (ActivityCompat.checkSelfPermission(getContext(), permission.CALL_PHONE)
