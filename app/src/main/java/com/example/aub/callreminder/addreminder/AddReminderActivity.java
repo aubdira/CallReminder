@@ -83,6 +83,7 @@ public class AddReminderActivity extends FragmentActivity implements onTimePicke
             
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mContactPhoneNumberET.setError(null);
             }
             
             @Override
