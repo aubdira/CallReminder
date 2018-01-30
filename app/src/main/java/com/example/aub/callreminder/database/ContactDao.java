@@ -5,8 +5,6 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
-import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public interface ContactDao {
     LiveData<List<Contact>> getContactsListByTimeASC();
 
     @Query("SELECT * FROM contacts_info WHERE is_log = 1 ORDER BY reminder_time DESC")
-    Flowable<List<Contact>> getContactsLogListByTimeDESC();
+    LiveData<List<Contact>> getContactsLogListByTimeDESC();
 
     @Insert long insertContact(Contact contact);
 

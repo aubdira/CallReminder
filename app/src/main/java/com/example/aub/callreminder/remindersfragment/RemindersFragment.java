@@ -36,7 +36,6 @@ public class RemindersFragment extends Fragment {
     @BindView(R.id.tv_emptyView) TextView mTvEmptyView;
     private Unbinder unbinder;
 
-    private RemindersFragViewModel remindersFragViewModel;
     private List<Contact> contactList = new ArrayList<>();
     private RemindersAdapter mRemindersAdapter;
 
@@ -54,7 +53,8 @@ public class RemindersFragment extends Fragment {
 
         setupRecyclerView();
 
-        remindersFragViewModel = ViewModelProviders.of(this).get(RemindersFragViewModel.class);
+        RemindersFragViewModel remindersFragViewModel =
+                ViewModelProviders.of(this).get(RemindersFragViewModel.class);
         remindersFragViewModel.getData().observe(this, contacts -> {
             contactList = contacts;
             mRemindersAdapter.setData(contacts);

@@ -2,7 +2,7 @@ package com.example.aub.callreminder.database;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
-import io.reactivex.Flowable;
+import io.reactivex.Completable;
 import java.util.List;
 
 
@@ -27,7 +27,7 @@ public class ContactRepository {
         return contactDao.getContactsListByTimeASC();
     }
 
-    public Flowable<List<Contact>> getContactsLogListByTimeDESC() {
+    public LiveData<List<Contact>> getContactsLogListByTimeDESC() {
         return contactDao.getContactsLogListByTimeDESC();
     }
 
@@ -35,8 +35,8 @@ public class ContactRepository {
         return contactDao.insertContact(contact);
     }
 
-    public void deleteContact(Contact contact) {
-        contactDao.deleteContact(contact);
+    public Completable deleteContact(Contact contact) {
+        return Completable.fromAction(() -> contactDao.deleteContact(contact));
     }
 
     public int updateAsLog(long time) {

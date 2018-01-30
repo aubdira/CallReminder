@@ -15,14 +15,9 @@ import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.LogsFragAdapter.ViewHolder;
 import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.database.ContactRepository;
-import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
 import com.example.aub.callreminder.utils.DateTimeConverter;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import javax.inject.Inject;
-import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -32,12 +27,19 @@ import org.greenrobot.eventbus.EventBus;
 
 public class LogsFragAdapter extends Adapter<ViewHolder> {
 
+    private View.OnClickListener deleteClickListener;
     private List<Contact> mContactList;
     @Inject ContactRepository mRepository;
 
-    public LogsFragAdapter(List<Contact> contactList) {
-        mContactList = contactList;
+    public LogsFragAdapter(List<Contact> contactList, View.OnClickListener deleteClickListener) {
         App.getContactRepositoryComponent().inject(this);
+        mContactList = contactList;
+        this.deleteClickListener = deleteClickListener;
+    }
+
+    public void setData(List<Contact> contacts) {
+        mContactList = contacts;
+        notifyDataSetChanged();
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -67,17 +69,9 @@ public class LogsFragAdapter extends Adapter<ViewHolder> {
             holder.mTvLogReminderReason.setText(reminderReason);
         }
 
-        // handel cancel button
-        holder.mDeleteBtn.setOnClickListener(v -> {
-            // delete(for now) the reminder from the database
-            Completable.fromAction(() -> mRepository.deleteContact(currentContact))
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> {
-                        // update the adapter
-                        DeleteLogAdapterEvent event = new DeleteLogAdapterEvent();
-                        EventBus.getDefault().post(event);
-                    });
-        });
+        // handel delete button
+        holder.mDeleteBtn.setTag(currentContact);
+        holder.mDeleteBtn.setOnClickListener(deleteClickListener);
     }
 
     @Override public int getItemCount() {

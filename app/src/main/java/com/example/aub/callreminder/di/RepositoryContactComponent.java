@@ -5,7 +5,7 @@ import com.example.aub.callreminder.adapters.RemindersAdapter;
 import com.example.aub.callreminder.addreminder.AddReminderInteractorImpl;
 import com.example.aub.callreminder.broadcastreceivers.NotificationPublisher;
 import com.example.aub.callreminder.di.module.RepositoryContactModule;
-import com.example.aub.callreminder.logsfragment.LogsFragInteractorImpl;
+import com.example.aub.callreminder.logsfragment.LogsFragViewModel;
 import com.example.aub.callreminder.remindersfragment.RemindersFragViewModel;
 import dagger.Component;
 import javax.inject.Singleton;
@@ -26,9 +26,9 @@ public interface RepositoryContactComponent {
 
     void inject(RemindersAdapter remindersAdapter);
 
-    void inject(LogsFragInteractorImpl logsFragInteractor);
-
     void inject(NotificationPublisher notificationPublisher);
 
     void inject(RemindersFragViewModel remindersFragViewModel);
+
+    void inject(LogsFragViewModel logsFragViewModel);
 }
