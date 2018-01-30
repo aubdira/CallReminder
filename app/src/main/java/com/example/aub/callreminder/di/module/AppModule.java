@@ -12,17 +12,18 @@ import javax.inject.Singleton;
  */
 @Module
 public class AppModule {
-
+    
     private Context mContext;
-
+    
     public AppModule(Context context) {
         mContext = context;
     }
-
-
-    @Provides @Singleton
+    
+    
+    @Provides
+    @Singleton
     public Context providesApplication() {
         return mContext;
     }
-
+    
 }

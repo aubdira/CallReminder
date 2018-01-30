@@ -13,19 +13,19 @@ import com.example.aub.callreminder.di.module.RepositoryContactModule;
  */
 
 public class App extends Application {
-
+    
     private static RepositoryContactComponent sRepositoryContactComponent;
-
-    @Override public void onCreate() {
-        super.onCreate();
-
-        sRepositoryContactComponent = DaggerRepositoryContactComponent.builder()
-                .appModule(new AppModule(this))
-                .repositoryContactModule(new RepositoryContactModule())
-                .build();
-    }
-
+    
     public static RepositoryContactComponent getContactRepositoryComponent() {
         return sRepositoryContactComponent;
+    }
+    
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        
+        sRepositoryContactComponent = DaggerRepositoryContactComponent.builder()
+                .appModule(new AppModule(this)).repositoryContactModule(new RepositoryContactModule())
+                .build();
     }
 }

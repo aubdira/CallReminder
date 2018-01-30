@@ -12,33 +12,33 @@ import java.util.List;
  */
 
 public class ContactRepository {
-
+    
     private final ContactDao contactDao;
-
+    
     public ContactRepository(Context context) {
         contactDao = DatabaseCreator.getAppDatabase(context).getContactDao();
     }
-
-//    public Maybe<Contact> getContactById(int id) {
-//        return contactDao.getContactById(id);
-//    }
-
+    
+    //    public Maybe<Contact> getContactById(int id) {
+    //        return contactDao.getContactById(id);
+    //    }
+    
     public LiveData<List<Contact>> getContactsListByTimeASC() {
         return contactDao.getContactsListByTimeASC();
     }
-
+    
     public LiveData<List<Contact>> getContactsLogListByTimeDESC() {
         return contactDao.getContactsLogListByTimeDESC();
     }
-
-    public long insertContact(Contact contact) {
-        return contactDao.insertContact(contact);
+    
+    public Completable insertContact(Contact contact) {
+        return Completable.fromAction(() -> contactDao.insertContact(contact));
     }
-
+    
     public Completable deleteContact(Contact contact) {
         return Completable.fromAction(() -> contactDao.deleteContact(contact));
     }
-
+    
     public int updateAsLog(long time) {
         return contactDao.updateContactAsLog(time);
     }

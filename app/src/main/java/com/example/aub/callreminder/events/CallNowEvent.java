@@ -6,13 +6,13 @@ package com.example.aub.callreminder.events;
  */
 
 public class CallNowEvent {
-
+    
     private String contactPhoneNumber;
-
+    
     public CallNowEvent(String contactPhoneNumber) {
         this.contactPhoneNumber = contactPhoneNumber;
     }
-
+    
     public String getContactPhoneNumber() {
         return contactPhoneNumber;
     }

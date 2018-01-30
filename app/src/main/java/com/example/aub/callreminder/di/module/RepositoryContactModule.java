@@ -14,8 +14,9 @@ import javax.inject.Singleton;
 
 @Module(includes = AppModule.class)
 public class RepositoryContactModule {
-
-    @Provides @Singleton
+    
+    @Provides
+    @Singleton
     public ContactRepository providesRepositoryModule(Context context) {
         return new ContactRepository(context);
     }

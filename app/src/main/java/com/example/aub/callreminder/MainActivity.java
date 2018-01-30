@@ -18,37 +18,41 @@ import org.greenrobot.eventbus.Subscribe;
 
 
 public class MainActivity extends AppCompatActivity {
-
-//    private static final String TAG = "MainActivity";
-
+    
+    //    private static final String TAG = "MainActivity";
+    
     @BindView(R.id.toolBar) Toolbar mToolBar;
     @BindView(R.id.main_view_pager) ViewPager mViewPager;
     @BindView(R.id.tabLayout) TabLayout mTabLayout;
-
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-
+        
         setSupportActionBar(mToolBar);
-
+        
         MainPagerAdapter pagerAdapter = new MainPagerAdapter(getSupportFragmentManager(), this);
         mViewPager.setAdapter(pagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }
-
-    @OnClick(R.id.fab_add_reminder) void addReminder() {
+    
+    @OnClick(R.id.fab_add_reminder)
+    void addReminder() {
         Intent intent = new Intent(this, AddReminderActivity.class);
         startActivity(intent);
     }
-
-    @Subscribe public void onEvent(NotifyMeEvent event) {
+    
+    @Subscribe
+    public void onEvent(NotifyMeEvent event) {
         Toast.makeText(this, "We will notify you in the future", Toast.LENGTH_SHORT).show();
     }
-
-    @Override protected void onDestroy() {
+    
+    @Override
+    protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }

@@ -6,7 +6,7 @@ package com.example.aub.callreminder.events;
  */
 
 public class UpdateContactAsLogEvent {
-
+    
     public UpdateContactAsLogEvent() {
     }
 }

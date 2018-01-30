@@ -15,19 +15,19 @@ import com.example.aub.callreminder.remindersfragment.RemindersFragment;
  */
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
-
+    
     private Context mContext;
-
+    
     public MainPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         mContext = context;
     }
-
+    
     @Override
     public int getCount() {
         return 2;
     }
-
+    
     @Override
     public Fragment getItem(int position) {
         switch (position) {
@@ -39,7 +39,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
                 return null;
         }
     }
-
+    
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {

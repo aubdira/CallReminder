@@ -31,7 +31,8 @@ public class LogsFragment extends Fragment {
     private LogsFragAdapter mAdapter;
 
     private View.OnClickListener deleteClickListener = new OnClickListener() {
-        @Override public void onClick(View v) {
+        @Override
+        public void onClick(View v) {
             Contact contact = (Contact) v.getTag();
             logsFragViewModel.deleteContact(contact);
         }
@@ -41,8 +42,7 @@ public class LogsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_logs, container, false);
 
@@ -76,7 +76,8 @@ public class LogsFragment extends Fragment {
         }
     }
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }

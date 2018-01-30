@@ -16,20 +16,22 @@ import java.util.List;
 
 @Dao
 public interface ContactDao {
-
+    
     @Query("SELECT * FROM contacts_info WHERE id = :id")
     Maybe<Contact> getContactById(int id);
-
+    
     @Query("SELECT * FROM contacts_info WHERE is_log = 0 ORDER BY reminder_time ASC")
     LiveData<List<Contact>> getContactsListByTimeASC();
-
+    
     @Query("SELECT * FROM contacts_info WHERE is_log = 1 ORDER BY reminder_time DESC")
     LiveData<List<Contact>> getContactsLogListByTimeDESC();
-
-    @Insert long insertContact(Contact contact);
-
+    
+    @Insert
+    void insertContact(Contact contact);
+    
     @Query("UPDATE contacts_info SET is_log = 1 WHERE reminder_time = :time")
     int updateContactAsLog(long time);
-
-    @Delete void deleteContact(Contact contact);
+    
+    @Delete
+    void deleteContact(Contact contact);
 }

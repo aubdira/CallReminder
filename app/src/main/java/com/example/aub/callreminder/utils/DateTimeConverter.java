@@ -11,9 +11,9 @@ import java.util.Locale;
  */
 
 public class DateTimeConverter {
-
+    
     private static Calendar sCal;
-
+    
     public static long getTimeInMills(int year, int month, int day, int hour, int minute) {
         sCal = Calendar.getInstance();
         sCal.set(Calendar.YEAR, year);
@@ -25,12 +25,12 @@ public class DateTimeConverter {
         sCal.set(Calendar.MILLISECOND, 0);
         return sCal.getTimeInMillis();
     }
-
+    
     public static long getNowDate() {
         sCal = Calendar.getInstance();
         return sCal.getTimeInMillis();
     }
-
+    
     public static String getFormattedDateTime(long millis) {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm   dd/MM/yy", Locale.getDefault());
         sCal = Calendar.getInstance();

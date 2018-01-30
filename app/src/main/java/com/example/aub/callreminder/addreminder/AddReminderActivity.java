@@ -1,6 +1,7 @@
 package com.example.aub.callreminder.addreminder;
 
 import android.app.DialogFragment;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,10 +9,11 @@ import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,182 +23,175 @@ import com.example.aub.callreminder.dateandtimepickers.DatePickerFragment;
 import com.example.aub.callreminder.dateandtimepickers.DatePickerFragment.onDatePickerListener;
 import com.example.aub.callreminder.dateandtimepickers.TimePickerFragment;
 import com.example.aub.callreminder.dateandtimepickers.TimePickerFragment.onTimePickerListener;
-import com.example.aub.callreminder.events.ContactNamePhoneEvent;
-import com.example.aub.callreminder.events.NotifyMeEvent;
-import com.example.aub.callreminder.events.StoreContactFinishedEvent;
 import com.example.aub.callreminder.utils.DateTimeConverter;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 
-public class AddReminderActivity extends FragmentActivity implements
-        onTimePickerListener, onDatePickerListener, AddReminderView {
-
-    private static final String TAG = "AddReminderActivity";
+public class AddReminderActivity extends FragmentActivity implements onTimePickerListener,
+        onDatePickerListener {
+    
     public static final int REQUEST_CODE = 113;
-
+    private static final String TAG = "AddReminderActivity";
     @BindView(R.id.et_contact_name) TextInputEditText mContactNameET;
     @BindView(R.id.et_contact_phone_number) TextInputEditText mContactPhoneNumberET;
     @BindView(R.id.et_reminder_reason) TextInputEditText mReminderReasonET;
     @BindView(R.id.btn_time_picker) Button mTimePickerBtn;
     @BindView(R.id.btn_date_picker) Button mDatePickerBtn;
-
+    
     boolean btnIsRed = false;
-
-    private int mYear, mMonth, mDay, mHour, mMinute;
-    private long mTimeInMills;
-    private String mContactName;
-    private String mPhoneNumber;
-    private String mReminderReason;
-
-    private AddReminderPresenter mPresenter;
-    private String mDate;
-    private String mTime;
-
-
+    
+    private AddReminderViewModel mAddReminderViewModel;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reminder);
-
-        mPresenter = new AddReminderPresenterImpl(this);
-
-        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
+        
+        setupClickListeners();
+        setupViewModel();
     }
-
-    @Override protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("time", mTime);
-        outState.putString("date", mDate);
-        outState.putInt("year", mYear);
-        outState.putInt("month", mMonth);
-        outState.putInt("day", mDay);
-        outState.putInt("hour", mHour);
-        outState.putInt("minute", mMinute);
+    
+    private void setupViewModel() {
+        mAddReminderViewModel = ViewModelProviders.of(this).get(AddReminderViewModel.class);
+        mContactNameET.setText(mAddReminderViewModel.getContactName());
+        mContactPhoneNumberET.setText(mAddReminderViewModel.getContactPhoneNumber());
+        mReminderReasonET.setText(mAddReminderViewModel.getReminderReason());
+        mTimePickerBtn.setText(mAddReminderViewModel.getTime());
+        mDatePickerBtn.setText(mAddReminderViewModel.getDate());
     }
-
-    @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        String time = savedInstanceState.getString("time");
-        String date = savedInstanceState.getString("date");
-        int year = savedInstanceState.getInt("year");
-        int month = savedInstanceState.getInt("month");
-        int day = savedInstanceState.getInt("day");
-        int hour = savedInstanceState.getInt("hour");
-        int minute = savedInstanceState.getInt("minute");
-        if (time != null && !time.isEmpty()) {
-            mTime = time;
-            mTimePickerBtn.setText(mTime);
-        }
-        if (date != null && !date.isEmpty()) {
-            mDate = date;
-            mDatePickerBtn.setText(mDate);
-        }
-        mYear = year;
-        mMonth = month;
-        mDay = day;
-        mHour = hour;
-        mMinute = minute;
+    
+    private void setupClickListeners() {
+        mContactNameET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                mAddReminderViewModel.setContactName(s.toString());
+            }
+        });
+        
+        mContactPhoneNumberET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                mAddReminderViewModel.setContactPhoneNumber(s.toString());
+            }
+        });
+        
+        mReminderReasonET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                mAddReminderViewModel.setReminderReason(s.toString());
+            }
+        });
+        
+        mTimePickerBtn.setOnClickListener(v -> {
+            DialogFragment timeFragment = new TimePickerFragment();
+            timeFragment.show(getFragmentManager(), "timePicker");
+        });
+        
+        mDatePickerBtn.setOnClickListener(v -> {
+            DialogFragment dateFragment = new DatePickerFragment();
+            dateFragment.show(getFragmentManager(), "datePicker");
+        });
     }
-
-    @OnClick(R.id.btn_time_picker)
-    public void showTimePickerDialog(View v) {
-        DialogFragment timeFragment = new TimePickerFragment();
-        timeFragment.show(getFragmentManager(), "timePicker");
-    }
-
+    
     @Override
     public void onTimeSet(int hourOfDay, int minute) {
-        mHour = hourOfDay;
-        mMinute = minute;
-        mTime = getString(
-                R.string.time_displayed, String.valueOf(mHour), String.valueOf(mMinute));
-        mTimePickerBtn.setText(mTime);
+        mAddReminderViewModel.setHour(hourOfDay);
+        mAddReminderViewModel.setMinute(minute);
+        String time = getString(R.string.time_displayed, String.valueOf(hourOfDay), String.valueOf(minute));
+        
+        mAddReminderViewModel.setTime(time);
+        mTimePickerBtn.setText(mAddReminderViewModel.getTime());
     }
-
-    @OnClick(R.id.btn_date_picker)
-    public void showDatePickerDialog(View v) {
-        DialogFragment dateFragment = new DatePickerFragment();
-        dateFragment.show(getFragmentManager(), "datePicker");
-    }
-
+    
+    
     @Override
     public void onDateSet(int year, int month, int day) {
-        mYear = year;
-        mMonth = month;
-        mDay = day;
-        mDate = getString(R.string.date_displayed,
-                String.valueOf(mDay), String.valueOf(mMonth + 1),
-                String.valueOf(mYear));
-        mDatePickerBtn.setText(mDate);
+        mAddReminderViewModel.setYear(year);
+        mAddReminderViewModel.setMonth(month);
+        mAddReminderViewModel.setDay(day);
+        String date = getString(R.string.date_displayed, String.valueOf(day), String.valueOf(month + 1),
+                String.valueOf(year));
+        
+        mAddReminderViewModel.setDate(date);
+        mDatePickerBtn.setText(mAddReminderViewModel.getDate());
         if (btnIsRed) {
             mDatePickerBtn.setTextColor(Color.BLACK);
             btnIsRed = false;
         }
     }
-
+    
     @OnClick(R.id.btn_from_contact)
     public void retrieveContactInfo(View v) {
         Intent intent = new Intent(Intent.ACTION_PICK, Contacts.CONTENT_URI);
         startActivityForResult(intent, REQUEST_CODE);
     }
-
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CODE:
                     ContentResolver resolver = getContentResolver();
-                    mPresenter.queryResolverForContactInfo(resolver, data);
+                    mAddReminderViewModel.getContactInfo(resolver, data);
+                    mContactNameET.setText(mAddReminderViewModel.getContactName());
+                    mContactPhoneNumberET.setText(mAddReminderViewModel.getContactPhoneNumber());
                     break;
             }
         } else {
             Log.d(TAG, "pickContactInfo: Failed to pick contact");
         }
     }
-
-    @OnClick(R.id.btn_set_reminder) public void setReminder() {
-        mTimeInMills = DateTimeConverter.getTimeInMills(mYear, mMonth, mDay, mHour, mMinute);
-        mContactName = mContactNameET.getText().toString();
-        mPhoneNumber = mContactPhoneNumberET.getText().toString();
-        mReminderReason = mReminderReasonET.getText().toString();
-
-        mPresenter.validateContactFields(mContactName, mPhoneNumber, mTimeInMills, mReminderReason);
-
-        Log.d(TAG, "setReminder: phone number " + mPhoneNumber);
-        Log.d(TAG, "setReminder: date is " + mTimeInMills);
+    
+    @OnClick(R.id.btn_set_reminder)
+    public void setReminder() {
+        if (mAddReminderViewModel.getContactPhoneNumber().isEmpty()) {
+            phoneNumberRequiredError();
+            return;
+        }
+        if (DateTimeConverter.getNowDate() > mAddReminderViewModel.getTimeInMillis()) {
+            displayFutureDateError();
+            return;
+        }
+        
+        mAddReminderViewModel.addContact();
+        mAddReminderViewModel.notifyMe();
+        finish();
     }
-
-    @Override public void phoneNumberRequiredError() {
+    
+    public void phoneNumberRequiredError() {
         mContactPhoneNumberET.setError(getString(R.string.phone_number_required));
         mContactPhoneNumberET.requestFocus();
     }
-
-    @Override public void displayFutureDateError() {
+    
+    public void displayFutureDateError() {
         mDatePickerBtn.setTextColor(Color.RED);
         mDatePickerBtn.requestFocus();
         btnIsRed = true;
-        Toast.makeText(this, "Date should be in the future", Toast.LENGTH_SHORT).show();
-    }
-
-    @Subscribe public void onEvent(StoreContactFinishedEvent event) {
-        mPresenter.createNotification(mContactName, mPhoneNumber, mReminderReason, mTimeInMills);
-    }
-
-    @Subscribe public void onEvent(NotifyMeEvent event) {
-        finish();
-    }
-
-    @Subscribe public void onEvent(ContactNamePhoneEvent event) {
-        Log.d(TAG, "EventBus onEvent: name " + event.getName());
-        mContactNameET.setText(event.getName());
-        mContactPhoneNumberET.setText(event.getPhone());
-    }
-
-    @Override protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        mPresenter.onDetach();
-        super.onDestroy();
+        Toast.makeText(this, "We can try, but we can't promise to set the reminder in the past",
+                Toast.LENGTH_SHORT).show();
     }
 }

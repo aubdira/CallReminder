@@ -14,14 +14,14 @@ import javax.inject.Inject;
  */
 
 public class RemindersFragViewModel extends ViewModel {
-
+    
     @Inject ContactRepository contactRepository;
-
+    
     public RemindersFragViewModel() {
         App.getContactRepositoryComponent().inject(this);
     }
-
-
+    
+    
     public LiveData<List<Contact>> getData() {
         return contactRepository.getContactsListByTimeASC();
     }

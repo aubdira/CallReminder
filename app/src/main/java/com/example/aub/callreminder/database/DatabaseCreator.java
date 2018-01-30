@@ -12,17 +12,15 @@ import android.content.Context;
 
 class DatabaseCreator {
 
-    private static AppDatabase appDatabase;
     private static final Object LOCK = new Object();
+    private static AppDatabase appDatabase;
 
     synchronized static AppDatabase getAppDatabase(Context context) {
         if (appDatabase == null) {
             synchronized (LOCK) {
                 if (appDatabase == null) {
-                    appDatabase = Room.databaseBuilder(
-                            context,
-                            AppDatabase.class,
-                            AppDatabase.DB_NAME).build();
+                    appDatabase = Room.databaseBuilder(context, AppDatabase.class, AppDatabase.DB_NAME)
+                            .build();
                 }
             }
         }

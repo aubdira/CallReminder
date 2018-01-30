@@ -19,34 +19,35 @@ import javax.inject.Inject;
  */
 
 public class LogsFragViewModel extends ViewModel {
-
+    
     private static final String TAG = "LogsFragViewModel";
-
+    
     @Inject ContactRepository contactRepository;
-
+    
     public LogsFragViewModel() {
         App.getContactRepositoryComponent().inject(this);
     }
-
+    
     public LiveData<List<Contact>> getData() {
         return contactRepository.getContactsLogListByTimeDESC();
     }
-
+    
     void deleteContact(Contact contact) {
-        contactRepository.deleteContact(contact)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override public void onSubscribe(Disposable d) {
-                    }
-
-                    @Override public void onComplete() {
-                        Log.d(TAG, "onComplete: contact deleted");
-                    }
-
-                    @Override public void onError(Throwable e) {
-                        Log.d(TAG, "onError: unable to delete contact");
-                    }
-                });
+        contactRepository.deleteContact(contact).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+            
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete: contact deleted");
+            }
+            
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: unable to delete contact");
+            }
+        });
     }
 }
