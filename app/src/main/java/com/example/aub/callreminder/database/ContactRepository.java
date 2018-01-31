@@ -39,7 +39,7 @@ public class ContactRepository {
         return Completable.fromAction(() -> contactDao.deleteContact(contact));
     }
     
-    public int updateAsLog(long time) {
-        return contactDao.updateContactAsLog(time);
+    public Completable updateAsLog(long time) {
+        return Completable.fromAction(() -> contactDao.updateContactAsLog(time));
     }
 }

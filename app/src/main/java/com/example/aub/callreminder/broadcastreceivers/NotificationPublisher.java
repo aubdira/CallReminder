@@ -15,12 +15,9 @@ import android.util.Log;
 import com.example.aub.callreminder.App;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.database.ContactRepository;
-import com.example.aub.callreminder.events.UpdateContactAsLogEvent;
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
-import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -58,13 +55,10 @@ public class NotificationPublisher extends BroadcastReceiver {
             
             // after canceling or accepting to call the number
             // update the reminder as 'log'
-            Completable.fromAction(() -> {
-                int id = mRepository.updateAsLog(time);
-                Log.d(TAG, "onReceive: id of contact updated " + id);
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
-                UpdateContactAsLogEvent event = new UpdateContactAsLogEvent();
-                EventBus.getDefault().post(event);
-            }, throwable -> Log.d(TAG, "onReceive: Unable to update contact"));
+            mRepository.updateAsLog(time).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
+                // do nothing for now
+            });
             
         }
     }

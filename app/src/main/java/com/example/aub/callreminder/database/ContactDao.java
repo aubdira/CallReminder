@@ -30,7 +30,7 @@ public interface ContactDao {
     void insertContact(Contact contact);
     
     @Query("UPDATE contacts_info SET is_log = 1 WHERE reminder_time = :time")
-    int updateContactAsLog(long time);
+    void updateContactAsLog(long time);
     
     @Delete
     void deleteContact(Contact contact);

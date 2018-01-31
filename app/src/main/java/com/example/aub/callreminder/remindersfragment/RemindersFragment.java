@@ -21,11 +21,8 @@ import butterknife.Unbinder;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.RemindersAdapter;
 import com.example.aub.callreminder.database.Contact;
-import com.example.aub.callreminder.events.CallNowEvent;
 import java.util.ArrayList;
 import java.util.List;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 
 public class RemindersFragment extends Fragment {
@@ -39,6 +36,25 @@ public class RemindersFragment extends Fragment {
     private List<Contact> contactList = new ArrayList<>();
     private RemindersAdapter mRemindersAdapter;
     
+    RemindersFragViewModel remindersFragViewModel;
+    
+    private View.OnClickListener cancelClickListener = v -> {
+        Contact contact = (Contact) v.getTag();
+        remindersFragViewModel.cancelReminder(contact);
+    };
+    
+    private View.OnClickListener callNowClickListener = v -> {
+        Contact contact = (Contact) v.getTag();
+        Intent callIntent = new Intent(Intent.ACTION_CALL,
+                Uri.parse("tel:" + contact.getContactPhoneNumber()));
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        
+        if (ActivityCompat.checkSelfPermission(getContext(), permission.CALL_PHONE)
+                == PackageManager.PERMISSION_GRANTED) {
+            getContext().startActivity(callIntent);
+        }
+    };
+    
     public RemindersFragment() {
     }
     
@@ -48,12 +64,10 @@ public class RemindersFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_reminders, container, false);
         
         unbinder = ButterKnife.bind(this, view);
-        EventBus.getDefault().register(this);
         
         setupRecyclerView();
         
-        RemindersFragViewModel remindersFragViewModel = ViewModelProviders.of(this)
-                .get(RemindersFragViewModel.class);
+        remindersFragViewModel = ViewModelProviders.of(this).get(RemindersFragViewModel.class);
         remindersFragViewModel.getData().observe(this, contacts -> {
             contactList = contacts;
             mRemindersAdapter.setData(contacts);
@@ -64,7 +78,7 @@ public class RemindersFragment extends Fragment {
     }
     
     private void setupRecyclerView() {
-        mRemindersAdapter = new RemindersAdapter(contactList);
+        mRemindersAdapter = new RemindersAdapter(contactList, cancelClickListener, callNowClickListener);
         mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mReminderFragRv.setAdapter(mRemindersAdapter);
     }
@@ -83,17 +97,6 @@ public class RemindersFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-        EventBus.getDefault().unregister(this);
     }
     
-    @Subscribe
-    public void onEvent(CallNowEvent event) {
-        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + event.getContactPhoneNumber()));
-        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        
-        if (ActivityCompat.checkSelfPermission(getContext(), permission.CALL_PHONE)
-                == PackageManager.PERMISSION_GRANTED) {
-            getContext().startActivity(callIntent);
-        }
-    }
 }

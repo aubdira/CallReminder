@@ -1,9 +1,6 @@
 package com.example.aub.callreminder.adapters;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -17,18 +14,11 @@ import butterknife.ButterKnife;
 import com.example.aub.callreminder.App;
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.RemindersAdapter.ViewHolder;
-import com.example.aub.callreminder.broadcastreceivers.NotificationPublisher;
 import com.example.aub.callreminder.database.Contact;
 import com.example.aub.callreminder.database.ContactRepository;
-import com.example.aub.callreminder.events.CallNowEvent;
-import com.example.aub.callreminder.events.DeleteLogAdapterEvent;
 import com.example.aub.callreminder.utils.DateTimeConverter;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import java.util.List;
 import javax.inject.Inject;
-import org.greenrobot.eventbus.EventBus;
 
 
 /**
@@ -42,9 +32,15 @@ public class RemindersAdapter extends Adapter<ViewHolder> {
     @Inject Context mContext;
     private List<Contact> mContactList;
     
-    public RemindersAdapter(List<Contact> contacts) {
+    private View.OnClickListener cancelClickListener;
+    private View.OnClickListener callNowClickListener;
+    
+    public RemindersAdapter(List<Contact> contacts, View.OnClickListener cancelClickListener,
+            View.OnClickListener callNowClickListener) {
         App.getContactRepositoryComponent().inject(this);
         mContactList = contacts;
+        this.cancelClickListener = cancelClickListener;
+        this.callNowClickListener = callNowClickListener;
     }
     
     public void setData(List<Contact> data) {
@@ -81,34 +77,12 @@ public class RemindersAdapter extends Adapter<ViewHolder> {
         }
         
         // handel cancel button
-        holder.mCancelBtn.setOnClickListener(v -> {
-            // delete(for now) the reminder from the database
-            Completable.fromAction(() -> {
-                mRepository.deleteContact(currentContact);
-                
-                // cancel the alarm manager
-                Intent intent = new Intent(mContext, NotificationPublisher.class);
-                PendingIntent pendingIntent = PendingIntent
-                        .getBroadcast(mContext, (int) currentContact.getReminderTime(), intent,
-                                PendingIntent.FLAG_UPDATE_CURRENT);
-                
-                AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                if (alarmManager != null) {
-                    alarmManager.cancel(pendingIntent);
-                }
-                
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
-                // update the adapter
-                DeleteLogAdapterEvent event = new DeleteLogAdapterEvent();
-                EventBus.getDefault().post(event);
-            });
-        });
+        holder.mCancelBtn.setTag(currentContact);
+        holder.mCancelBtn.setOnClickListener(cancelClickListener);
         
         // handel call button
-        holder.mCallNowBtn.setOnClickListener(v -> {
-            CallNowEvent event = new CallNowEvent(currentContact.getContactPhoneNumber());
-            EventBus.getDefault().post(event);
-        });
+        holder.mCallNowBtn.setTag(currentContact);
+        holder.mCallNowBtn.setOnClickListener(callNowClickListener);
     }
     
     @Override
