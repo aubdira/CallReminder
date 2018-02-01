@@ -36,5 +36,7 @@
   <string name="cancel_button">Cancel</string>
   <string name="call_now_btn">Call</string>
   <string name="log_delete_btn">Delete</string>
+  <string name="we_will_notify_you_in_the_future">We will notify you in the future</string>
+  <string name="reminder_icon">reminder icon</string>
 
 </resources>

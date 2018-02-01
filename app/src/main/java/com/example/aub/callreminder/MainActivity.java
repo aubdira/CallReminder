@@ -6,6 +6,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,7 +51,13 @@ public class MainActivity extends AppCompatActivity {
     
     @Subscribe
     public void onEvent(NotifyMeEvent event) {
-        Toast.makeText(this, "We will notify you in the future", Toast.LENGTH_SHORT).show();
+        LayoutInflater inflater = getLayoutInflater();
+        View custom_toast_view = inflater.inflate(R.layout.custom_toast, null);
+        Toast toast = new Toast(this);
+        toast.setGravity(Gravity.BOTTOM, 0, 24);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(custom_toast_view);
+        toast.show();
     }
     
     @Override
