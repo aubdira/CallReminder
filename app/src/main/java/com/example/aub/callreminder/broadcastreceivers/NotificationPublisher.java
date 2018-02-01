@@ -29,7 +29,6 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static final String NAME = "name";
     public static final String PHONE = "phone";
     public static final String REASON = "reason";
-    public static final int NOTIFICATION_ID = 1;
     public static final String TIME = "time_in_millis";
     private static final String TAG = "NotificationPublisher";
     @Inject ContactRepository mRepository;
@@ -50,7 +49,7 @@ public class NotificationPublisher extends BroadcastReceiver {
                     .getSystemService(NOTIFICATION_SERVICE);
             Notification notification = getNotification(context, name, phone, reason);
             if (manager != null) {
-                manager.notify(NOTIFICATION_ID, notification);
+                manager.notify((int) time, notification);
             }
             
             // after canceling or accepting to call the number
