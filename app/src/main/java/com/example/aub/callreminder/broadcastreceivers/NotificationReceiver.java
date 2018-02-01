@@ -31,7 +31,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         
         String action = intent.getAction();
-        
+        long time = intent.getLongExtra("time", 0);
         if (CALL_ACTION.equals(action)) {
             String phoneNumber = intent.getStringExtra("phone_number");
             
@@ -42,13 +42,13 @@ public class NotificationReceiver extends BroadcastReceiver {
                     == PackageManager.PERMISSION_GRANTED) {
                 context.startActivity(callIntent);
                 if (manager != null) {
-                    manager.cancel(NotificationPublisher.NOTIFICATION_ID);
+                    manager.cancel((int) time);
                 }
             }
             
         } else if (CANCEL_ACTION.equals(action)) {
             if (manager != null) {
-                manager.cancel(NotificationPublisher.NOTIFICATION_ID);
+                manager.cancel((int) time);
             }
         }
     }

@@ -47,7 +47,7 @@ public class NotificationPublisher extends BroadcastReceiver {
             final long time = intent.getLongExtra(TIME, 0);
             NotificationManager manager = (NotificationManager) context
                     .getSystemService(NOTIFICATION_SERVICE);
-            Notification notification = getNotification(context, name, phone, reason);
+            Notification notification = getNotification(context, name, phone, reason, time);
             if (manager != null) {
                 manager.notify((int) time, notification);
             }
@@ -63,7 +63,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     }
     
     private Notification getNotification(Context context, String contactName, String phoneNumber,
-            String reason) {
+            String reason, long time) {
         Resources resources = context.getResources();
         long[] pattern = {0, 300, 400, 300, 100, 0};
         
@@ -82,6 +82,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         
         // notification cancel action
         Intent cancelIntent = new Intent();
+        cancelIntent.putExtra("time", time);
         cancelIntent.setAction(NotificationReceiver.CANCEL_ACTION);
         PendingIntent cancelPending = PendingIntent
                 .getBroadcast(context, 3, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -91,6 +92,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         // notification call action
         Intent callIntent = new Intent();
         callIntent.putExtra("phone_number", phoneNumber);
+        callIntent.putExtra("time", time);
         callIntent.setAction(NotificationReceiver.CALL_ACTION);
         PendingIntent callPending = PendingIntent
                 .getBroadcast(context, 3, callIntent, PendingIntent.FLAG_UPDATE_CURRENT);
