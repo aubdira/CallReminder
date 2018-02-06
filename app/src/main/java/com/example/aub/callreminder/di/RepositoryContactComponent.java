@@ -10,25 +10,23 @@ import com.example.aub.callreminder.remindersfragment.RemindersFragViewModel;
 import dagger.Component;
 import javax.inject.Singleton;
 
-
 /**
  * Created by aub on 1/17/18.
  * Project: CallReminder
  */
 
-@Singleton
-@Component(modules = {RepositoryContactModule.class})
+@Singleton @Component(modules = { RepositoryContactModule.class })
 public interface RepositoryContactComponent {
-    
-    void inject(LogsFragAdapter logsFragAdapter);
-    
-    void inject(RemindersAdapter remindersAdapter);
-    
-    void inject(NotificationPublisher notificationPublisher);
-    
-    void inject(RemindersFragViewModel remindersFragViewModel);
-    
-    void inject(LogsFragViewModel logsFragViewModel);
-    
-    void inject(AddReminderViewModel addReminderViewModel);
+
+  void inject(LogsFragAdapter logsFragAdapter);
+
+  void inject(RemindersAdapter remindersAdapter);
+
+  void inject(NotificationPublisher notificationPublisher);
+
+  void inject(RemindersFragViewModel remindersFragViewModel);
+
+  void inject(LogsFragViewModel logsFragViewModel);
+
+  void inject(AddReminderViewModel addReminderViewModel);
 }
