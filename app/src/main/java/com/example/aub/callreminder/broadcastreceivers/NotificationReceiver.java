@@ -18,35 +18,36 @@ import android.support.v4.app.ActivityCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-  public static final String CALL_ACTION = "call_action";
-  public static final String CANCEL_ACTION = "cancel_action";
+    public static final String CALL_ACTION = "call_action";
+    public static final String CANCEL_ACTION = "cancel_action";
 
-  //    private static final String TAG = "NotificationReceiver";
+    //    private static final String TAG = "NotificationReceiver";
 
-  @SuppressLint("StaticFieldLeak") @Override
-  public void onReceive(final Context context, Intent intent) {
-    NotificationManager manager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void onReceive(final Context context, Intent intent) {
+        NotificationManager manager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-    String action = intent.getAction();
-    long time = intent.getLongExtra("time", 0);
-    if (CALL_ACTION.equals(action)) {
-      String phoneNumber = intent.getStringExtra("phone_number");
+        String action = intent.getAction();
+        long time = intent.getLongExtra("time", 0);
+        if (CALL_ACTION.equals(action)) {
+            String phoneNumber = intent.getStringExtra("phone_number");
 
-      Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
-      callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-      if (ActivityCompat.checkSelfPermission(context, permission.CALL_PHONE)
-          == PackageManager.PERMISSION_GRANTED) {
-        context.startActivity(callIntent);
-        if (manager != null) {
-          manager.cancel((int) time);
+            if (ActivityCompat.checkSelfPermission(context, permission.CALL_PHONE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                context.startActivity(callIntent);
+                if (manager != null) {
+                    manager.cancel((int) time);
+                }
+            }
+        } else if (CANCEL_ACTION.equals(action)) {
+            if (manager != null) {
+                manager.cancel((int) time);
+            }
         }
-      }
-    } else if (CANCEL_ACTION.equals(action)) {
-      if (manager != null) {
-        manager.cancel((int) time);
-      }
     }
-  }
 }

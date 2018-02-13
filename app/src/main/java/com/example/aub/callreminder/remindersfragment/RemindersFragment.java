@@ -14,91 +14,93 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+
 import com.example.aub.callreminder.R;
 import com.example.aub.callreminder.adapters.RemindersAdapter;
 import com.example.aub.callreminder.database.Contact;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class RemindersFragment extends Fragment {
 
-  //    private static final String TAG = "RemindersFragment";
+    //    private static final String TAG = "RemindersFragment";
 
-  @BindView(R.id.reminder_frag_rv) RecyclerView mReminderFragRv;
-  @BindView(R.id.tv_emptyView) TextView mTvEmptyView;
+    @BindView(R.id.reminder_frag_rv)
+    RecyclerView mReminderFragRv;
+    @BindView(R.id.tv_emptyView)
+    TextView mTvEmptyView;
 
-  RemindersFragViewModel remindersFragViewModel;
+    RemindersFragViewModel remindersFragViewModel;
 
-  private Unbinder unbinder;
-  private List<Contact> contactList = new ArrayList<>();
-  private RemindersAdapter mRemindersAdapter;
+    private Unbinder unbinder;
+    private List<Contact> contactList = new ArrayList<>();
+    private RemindersAdapter mRemindersAdapter;
 
-  private View.OnClickListener cancelClickListener = v -> {
-    Contact contact = (Contact) v.getTag();
-    remindersFragViewModel.cancelReminder(contact);
-  };
+    private View.OnClickListener cancelClickListener = v -> {
+        Contact contact = (Contact) v.getTag();
+        remindersFragViewModel.cancelReminder(contact);
+    };
 
-  private View.OnClickListener callNowClickListener = v -> {
-    Contact contact = (Contact) v.getTag();
-    Intent callIntent =
-        new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contact.getContactPhoneNumber()));
-    callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    private View.OnClickListener callNowClickListener = v -> {
+        Contact contact = (Contact) v.getTag();
+        Intent callIntent =
+                new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contact.getContactPhoneNumber()));
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-    if (ActivityCompat.checkSelfPermission(getContext(), permission.CALL_PHONE)
-        == PackageManager.PERMISSION_GRANTED) {
-      getContext().startActivity(callIntent);
+        if (ActivityCompat.checkSelfPermission(getContext(), permission.CALL_PHONE)
+                == PackageManager.PERMISSION_GRANTED) {
+            getContext().startActivity(callIntent);
+        }
+    };
+
+    public RemindersFragment() {
     }
-  };
 
-  public RemindersFragment() {
-  }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_reminders, container, false);
 
-  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    // Inflate the layout for this fragment
-    View view = inflater.inflate(R.layout.fragment_reminders, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
-    unbinder = ButterKnife.bind(this, view);
+        setupRecyclerView();
 
-    setupRecyclerView();
+        remindersFragViewModel = ViewModelProviders.of(this).get(RemindersFragViewModel.class);
+        remindersFragViewModel.getData().observe(this, contacts -> {
+            contactList = contacts;
+            mRemindersAdapter.setData(contacts);
+            updateUi(contacts);
+        });
 
-    remindersFragViewModel = ViewModelProviders.of(this).get(RemindersFragViewModel.class);
-    remindersFragViewModel.getData().observe(this, contacts -> {
-      contactList = contacts;
-      mRemindersAdapter.setData(contacts);
-      updateUi(contacts);
-    });
-
-    return view;
-  }
-
-  private void setupRecyclerView() {
-    mRemindersAdapter =
-        new RemindersAdapter(contactList, cancelClickListener, callNowClickListener);
-    mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
-    mReminderFragRv.setAdapter(mRemindersAdapter);
-  }
-
-  private void updateUi(List<Contact> contacts) {
-    if (contacts.isEmpty()) {
-      mReminderFragRv.setVisibility(View.GONE);
-      mTvEmptyView.setVisibility(View.VISIBLE);
-    } else {
-      mReminderFragRv.setVisibility(View.VISIBLE);
-      mTvEmptyView.setVisibility(View.GONE);
+        return view;
     }
-  }
 
-  @Override public void onStop() {
-    remindersFragViewModel.clear();
-    super.onStop();
-  }
+    private void setupRecyclerView() {
+        mRemindersAdapter =
+                new RemindersAdapter(contactList, cancelClickListener, callNowClickListener);
+        mReminderFragRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mReminderFragRv.setAdapter(mRemindersAdapter);
+    }
 
-  @Override public void onDestroyView() {
-    super.onDestroyView();
-    unbinder.unbind();
-  }
+    private void updateUi(List<Contact> contacts) {
+        if (contacts.isEmpty()) {
+            mReminderFragRv.setVisibility(View.GONE);
+            mTvEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mReminderFragRv.setVisibility(View.VISIBLE);
+            mTvEmptyView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 }
